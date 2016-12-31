@@ -156,4 +156,25 @@ def log_out_dialog(dialog_state):
 
 
 def personal_account_dialog(dialog_state):
-    answer = yield 'Личный кабинет'
+    menu = Menu(
+        [
+            (active_credit_list_dialog(dialog_state), 'Кредиты'),
+            (credit_requests_dialog(dialog_state), 'Заявки')
+        ],
+        back_button=True
+    )
+
+    while True:
+        selected, _ = yield from td.require_choice('Личный кабинет', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+
+        if menu[selected] is None:
+            return
+        yield from menu[selected]
+
+
+def active_credit_list_dialog(dialog_state):
+    yield from only_back()
+
+
+def credit_requests_dialog(dialog_state):
+    yield from only_back()
