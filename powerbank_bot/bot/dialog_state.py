@@ -6,12 +6,19 @@ from powerbank_bot.helpers.storage import Storage
 
 LOGGER = logging.getLogger('dialog_state')
 
+
+class AuthState:
+    AUTHENTICATED = 'authenticated'
+    CODE_SENT = 'code_sent'
+    NONE = 'node'
+
+
 INITIAL_DIALOG_STATE = {
     'user_id': None,
     'phone_number': None,
     'is_authenticated': False,
     'auth_locked_till': 0,
-    'auth_state': None
+    'auth_state': AuthState.NONE
 }
 HOUR = 60 * 60
 
@@ -41,7 +48,7 @@ class DialogState:
 
     @property
     def is_authenticated(self):
-        return self._state['is_authenticated']
+        return self._state['auth_state'] == AuthState.AUTHENTICATED
 
     @property
     def is_auth_locked(self):
@@ -79,14 +86,13 @@ class DialogState:
         self._state['phone_number'] = phone_number
         self._state['verification_code'] = self._generate_verification_code()
         self._send_confirmation_message()
-        self._state['auth_state'] = 'code_sent'
+        self._state['auth_state'] = AuthState.CODE_SENT
 
     def complete_authentication(self, verification_code):
-        if not self._state['auth_state'] == 'code_sent':
+        if not self._state['auth_state'] == AuthState.CODE_SENT:
             raise RuntimeError('Call start_authentication first')
         elif verification_code != self._state['verification_code']:
             return False
 
-        self._state['is_authenticated'] = True
-        self._state['auth_state'] = 'authenticated'
+        self._state['auth_state'] = AuthState.AUTHENTICATED
         return True
