@@ -150,7 +150,9 @@ def create_credit_request_dialog(dialog_state, credit):
 
 
 def log_out_dialog(dialog_state):
-    answer = yield 'Выход'
+    dialog_state.log_out()
+    dialog_state.save()
+    yield from only_back('Вы успешно вышли из аккаунта')
 
 
 def personal_account_dialog(dialog_state):
