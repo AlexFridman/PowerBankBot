@@ -20,7 +20,7 @@ class ApiWrapper:
     def get_user_credits(self, user_id):
         pass
 
-    def get_credits(self):
+    def get_credits_info(self):
         return [
             Credit(
                 name='кредит 1',
