@@ -111,7 +111,7 @@ def auth_dialog(dialog_state):
 
 def credit_list_dialog(dialog_state):
     while True:
-        menu = Menu([(credit_info(dialog_state, credit), credit.name)
+        menu = Menu([(credit_info_dialog(dialog_state, credit), credit.name)
                      for credit in dialog_state.api.get_credits_info()], back_button=True)
 
         selected, _ = yield from td.require_choice('Выберите тип кредита', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
@@ -121,7 +121,19 @@ def credit_list_dialog(dialog_state):
         yield from menu[selected]
 
 
-def credit_info(dialog_state, credit_info):
+def credit_info_dialog(dialog_state, credit):
+    menu = Menu(back_button=True)
+    if dialog_state.is_authenticated:
+        menu.add_item(create_request_dialog, 'Подать заявку')
+
+    selected, _ = yield from td.require_choice(credit.to_html(), menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+
+    if menu[selected] is None:
+        return
+    yield from menu[selected]
+
+
+def create_request_dialog(dialog_state, credit):
     pass
 
 
