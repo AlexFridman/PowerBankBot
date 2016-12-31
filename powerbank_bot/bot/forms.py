@@ -16,11 +16,11 @@ class FormField:
 
 CREDIT_FORM = [
     FormField('amount', 'Укажите размер кредита', int, [RangeIntegerValidator(100, 10000)]),
-    FormField('amount', 'Укажите размер кредита', int, [RangeIntegerValidator(100, 10000)])
+    FormField('amount', 'Укажите среднемесячный доход за последний год', int, [RangeIntegerValidator(100, 10000)])
 ]
 
 
-def form(schema, accept_back=True):
+def create_form_dialog(schema, accept_back=True):
     form_res = {}
     for form_field in schema:
         value = yield from form_field.get_question_method(accept_back)
