@@ -9,9 +9,13 @@ from powerbank_bot.bot.validators import PhoneNumberValidator
 
 logging.basicConfig(level=logging.DEBUG)
 
+MAKE_YOUR_CHOICE_CAPTION = 'Сделайте Ваш выбор'
+
 
 class Menu:
-    def __init__(self, items=None):
+    def __init__(self, items=None, back_button=False):
+        if back_button:
+            items = [(None, BACK_BUTTON_CONTENT)] + (items or [])
         self.items = OrderedDict(enumerate(items or []))
 
     def add_item(self, dialog_procedure, display_name):
@@ -40,7 +44,7 @@ def main_menu_dialog(start_message):
         elif not dialog_state.is_auth_locked:
             menu.add_item(auth_dialog(dialog_state), 'Авторизация')
 
-        selected, _ = yield from td.require_choice('Главное меню', menu.get_menu(), 'Сделайте Ваш выбор')
+        selected, _ = yield from td.require_choice('Главное меню', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
         yield from menu[selected]
 
 
@@ -106,7 +110,19 @@ def auth_dialog(dialog_state):
 
 
 def credit_list_dialog(dialog_state):
-    answer = yield 'Список кредитов'
+    while True:
+        menu = Menu([(credit_info(dialog_state, credit), credit.name)
+                     for credit in dialog_state.api.get_credits_info()], back_button=True)
+
+        selected, _ = yield from td.require_choice('Выберите тип кредита', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+
+        if menu[selected] is None:
+            return
+        yield from menu[selected]
+
+
+def credit_info(dialog_state, credit_info):
+    pass
 
 
 def log_out_dialog(dialog_state):
