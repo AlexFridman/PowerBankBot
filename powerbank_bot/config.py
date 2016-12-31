@@ -23,3 +23,8 @@ class Mongo(object):
         db = client.get_database(cls.db)
         db.authenticate(cls.username, cls.password)
         return db
+
+
+class Api:
+    credentials = ('client', 'clientclientclient')
+    base_url = 'http://pb.somee.com/api'

@@ -39,7 +39,7 @@ def main_menu(start_message):
 
 
 def info_menu(user_id):
-    credits = ApiWrapper().get_credits()
+    credits = ApiWrapper().get_credits_info()
     credit_names = [c['name'] for c in credits]
 
     while True:
