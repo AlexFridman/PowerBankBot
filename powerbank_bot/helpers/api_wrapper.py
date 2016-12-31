@@ -1,7 +1,12 @@
+import telegram_dialog as td
 from collections import namedtuple
 
-Credit = namedtuple('Credit', ['name', 'currency', 'percentage', 'duration'])
 User = namedtuple('User', ['user_id'])
+
+
+class Credit(namedtuple('Credit', ['name', 'currency', 'percentage', 'duration'])):
+    def to_html(self):
+        return td.HTML('''<h3>{0.name}</h3><br><h5>{0.currency}</h5>'''.format(self))
 
 
 class ApiWrapper:
