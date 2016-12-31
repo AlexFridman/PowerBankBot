@@ -174,7 +174,7 @@ def personal_account_dialog(dialog_state):
 
 def user_credit_list_dialog(dialog_state):
     while True:
-        menu = Menu([(credit_info_dialog(dialog_state, credit), credit.name)
+        menu = Menu([(user_credit_info_dialog(dialog_state, credit), credit.name)
                      for credit in dialog_state.get_credits()], back_button=True)
 
         selected, _ = yield from td.require_choice('Выберите кредит', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
