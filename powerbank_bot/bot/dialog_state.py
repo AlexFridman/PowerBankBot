@@ -23,6 +23,10 @@ INITIAL_DIALOG_STATE = {
 HOUR = 60 * 60
 
 
+class UserNotFoundError(Exception):
+    pass
+
+
 class DialogState:
     def __init__(self, storage, api_wrapper, state):
         self._state = state
@@ -66,7 +70,7 @@ class DialogState:
     def phone_number(self):
         return self._state['phone_number']
 
-    def lock_auth_for(self, seconds=HOUR):
+    def lock_auth(self, seconds=HOUR):
         self._state['auth_locked_till'] = int(time.time() + seconds)
 
     def _generate_verification_code(self):
@@ -81,7 +85,7 @@ class DialogState:
         elif self.is_authenticated:
             raise RuntimeError('Already authenticated')
         elif self._api_wrapper.get_user_by_phone_number(phone_number) is None:
-            raise RuntimeError('User with this number does not exist')
+            raise UserNotFoundError('User with this number does not exist')
 
         self._state['phone_number'] = phone_number
         self._state['verification_code'] = self._generate_verification_code()
