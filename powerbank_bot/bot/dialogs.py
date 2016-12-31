@@ -75,7 +75,7 @@ def auth_dialog(dialog_state):
         except UserNotFoundError:
             phone_number_message = 'Пользователь с таким номерорм не зарегистрирован\nВведите номер телефона'
         except Exception:
-            # TODO: call reset_auth_state
+            dialog_state.reset_auth_state()
             yield from only_back('Произошла ошибка. Попробуйте позже')
             return
         else:
@@ -96,7 +96,7 @@ def auth_dialog(dialog_state):
 
         if not code:
             # "back" button pressed
-            # TODO: call reset_auth_state
+            dialog_state.reset_auth_state()
             return
 
         if dialog_state.complete_authentication(code):
