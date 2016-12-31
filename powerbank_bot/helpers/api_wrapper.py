@@ -54,6 +54,14 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
             return emojize(':white_check_mark: {0.credit_type.name}'.format(self), use_aliases=True)
         return self.credit_type.name
 
+    def to_html(self):
+        # TODO: replace with real template string
+        return td.HTML(('<b>{0.name}</b>\n'
+                        'валюта: <i>{0.currency}</i>\n'
+                        'процент: <i>{0.percent}%</i>\n'
+                        'срок: <i>{0.duration}</i>\n'
+                        '<pre>{0.description}</pre>').format(self.credit_type))
+
 
 class ApiWrapper:
     def get_user_by_phone_number(self, phone_number):
