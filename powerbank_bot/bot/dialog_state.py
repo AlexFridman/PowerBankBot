@@ -10,7 +10,8 @@ INITIAL_DIALOG_STATE = {
     'user_id': None,
     'phone_number': None,
     'is_authenticated': False,
-    'auth_locked_till': 0
+    'auth_locked_till': 0,
+    'auth_state': None
 }
 HOUR = 60 * 60
 
@@ -60,3 +61,32 @@ class DialogState:
 
     def lock_auth_for(self, seconds=HOUR):
         self._state['auth_locked_till'] = int(time.time() + seconds)
+
+    def _generate_verification_code(self):
+        return '1234'
+
+    def _send_confirmation_message(self):
+        pass
+
+    def start_authentication(self, phone_number):
+        if self.is_auth_locked:
+            raise RuntimeError('Auth locked till {}'.format(self._state['auth_locked_till']))
+        elif self.is_authenticated:
+            raise RuntimeError('Already authenticated')
+        elif self._api_wrapper.get_user_by_phone_number(phone_number) is None:
+            raise RuntimeError('User with this number does not exist')
+
+        self._state['phone_number'] = phone_number
+        self._state['verification_code'] = self._generate_verification_code()
+        self._send_confirmation_message()
+        self._state['auth_state'] = 'code_sent'
+
+    def complete_authentication(self, verification_code):
+        if not self._state['auth_state'] == 'code_sent':
+            raise RuntimeError('Call start_authentication first')
+        elif verification_code != self._state['verification_code']:
+            return False
+
+        self._state['is_authenticated'] = True
+        self._state['auth_state'] = 'authenticated'
+        return True
