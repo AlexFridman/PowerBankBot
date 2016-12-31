@@ -84,6 +84,7 @@ class DialogState:
         pass
 
     def start_authentication(self, phone_number):
+        # TODO: add logging
         if self.is_auth_locked:
             raise RuntimeError('Auth locked till {}'.format(self._state['auth_locked_till']))
         elif self.is_authenticated:
@@ -100,6 +101,7 @@ class DialogState:
         self._state['auth_state'] = AuthState.CODE_SENT
 
     def complete_authentication(self, verification_code):
+        # TODO: add logging
         if not self._state['auth_state'] == AuthState.CODE_SENT:
             raise RuntimeError('Call start_authentication first')
         elif verification_code != self._state['verification_code']:
