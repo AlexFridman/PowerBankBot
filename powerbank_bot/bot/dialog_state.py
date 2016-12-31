@@ -1,8 +1,8 @@
 import logging
 import time
 
-from powerbank_bot.api_wrapper import ApiWrapper
-from powerbank_bot.storage import Storage
+from powerbank_bot.helpers.api_wrapper import ApiWrapper
+from powerbank_bot.helpers.storage import Storage
 
 LOGGER = logging.getLogger('dialog_state')
 

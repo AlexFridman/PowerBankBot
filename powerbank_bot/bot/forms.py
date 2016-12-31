@@ -1,5 +1,6 @@
-from powerbank_bot.field_coroutines import text_question, BACK
-from powerbank_bot.validators import RangeIntegerValidator
+from powerbank_bot.bot.field_coroutines import text_question
+
+from powerbank_bot.bot.validators import RangeIntegerValidator
 
 
 class FormField:
