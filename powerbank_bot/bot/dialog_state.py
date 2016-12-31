@@ -107,3 +107,7 @@ class DialogState:
 
         self._state['auth_state'] = AuthState.AUTHENTICATED
         return True
+
+    def create_credit_request(self, credit):
+        # TODO: implement
+        pass

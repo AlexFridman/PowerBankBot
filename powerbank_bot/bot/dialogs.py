@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
+from powerbank_bot.bot.forms import create_form_dialog, CREDIT_FORM
 from powerbank_bot.bot.validators import PhoneNumberValidator
 
 logging.basicConfig(level=logging.DEBUG)
@@ -99,6 +100,7 @@ def auth_dialog(dialog_state):
             return
 
         if dialog_state.complete_authentication(code):
+            dialog_state.save()
             break
         else:
             verification_code_message = 'Неверный код. Попробуйте еще раз'
@@ -124,7 +126,7 @@ def credit_list_dialog(dialog_state):
 def credit_info_dialog(dialog_state, credit):
     menu = Menu(back_button=True)
     if dialog_state.is_authenticated:
-        menu.add_item(create_request_dialog, 'Подать заявку')
+        menu.add_item(create_credit_request_dialog(dialog_state, credit), 'Подать заявку')
 
     selected, _ = yield from td.require_choice(credit.to_html(), menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
 
@@ -133,8 +135,18 @@ def credit_info_dialog(dialog_state, credit):
     yield from menu[selected]
 
 
-def create_request_dialog(dialog_state, credit):
-    pass
+def create_credit_request_dialog(dialog_state, credit):
+    form = yield from create_form_dialog(CREDIT_FORM)
+    if form is None:
+        return
+    else:
+        try:
+            dialog_state.create_credit_request(credit)
+        except:
+            yield from only_back('Произошла ошибка. Попробуйте позже')
+        else:
+            yield 'Заявка успешно подана'
+            # TODO: scoring form should be here
 
 
 def log_out_dialog(dialog_state):
