@@ -114,7 +114,7 @@ def auth_dialog(dialog_state):
 def credit_list_dialog(dialog_state):
     while True:
         menu = Menu([(credit_info_dialog(dialog_state, credit), credit.name)
-                     for credit in dialog_state.api.get_credits_info()], back_button=True)
+                     for credit in dialog_state.api.get_credit_types()], back_button=True)
 
         selected, _ = yield from td.require_choice('Выберите тип кредита', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
 
@@ -158,7 +158,7 @@ def log_out_dialog(dialog_state):
 def personal_account_dialog(dialog_state):
     menu = Menu(
         [
-            (active_credit_list_dialog(dialog_state), 'Кредиты'),
+            (user_credit_list_dialog(dialog_state), 'Кредиты'),
             (credit_requests_dialog(dialog_state), 'Заявки')
         ],
         back_button=True
@@ -172,8 +172,20 @@ def personal_account_dialog(dialog_state):
         yield from menu[selected]
 
 
-def active_credit_list_dialog(dialog_state):
-    yield from only_back()
+def user_credit_list_dialog(dialog_state):
+    while True:
+        menu = Menu([(credit_info_dialog(dialog_state, credit), credit.name)
+                     for credit in dialog_state.get_credits()], back_button=True)
+
+        selected, _ = yield from td.require_choice('Выберите кредит', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+
+        if menu[selected] is None:
+            return
+        yield from menu[selected]
+
+
+def user_credit_info_dialog(dialog_state, credit):
+    yield from only_back(credit.to_html())
 
 
 def credit_requests_dialog(dialog_state):

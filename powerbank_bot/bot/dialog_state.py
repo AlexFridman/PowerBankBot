@@ -122,3 +122,6 @@ class DialogState:
     def create_credit_request(self, credit):
         # TODO: implement
         pass
+
+    def get_credits(self):
+        return self._api_wrapper.get_user_credits(self.user_id)

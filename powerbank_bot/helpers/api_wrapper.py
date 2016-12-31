@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import datetime
 
 import humanize
@@ -5,6 +6,7 @@ import os
 import requests
 import telegram_dialog as td
 from collections import namedtuple
+from emoji import emojize
 
 from powerbank_bot.config import Api
 
@@ -34,6 +36,25 @@ class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'curr
         )
 
 
+class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_date', 'end_date', 'main_debt'])):
+    @classmethod
+    def from_json(cls, json):
+        humanize.i18n.activate('ru_RU')
+        return UserCredit(
+            credit_type=CreditType.from_json(json['CreditType']),
+            is_closed=json['IsClosed'],
+            start_date=humanize.naturaldate(datetime.datetime.strptime(json['FormattedStartDate'][:10], '%d.%m.%Y')),
+            end_date=humanize.naturaldate(datetime.datetime.strptime(json['FormattedEndDate'][:10], '%d.%m.%Y')),
+            main_debt=json['MainDebt']
+        )
+
+    @property
+    def name(self):
+        if self.is_closed:
+            return emojize(':white_check_mark: {0.credit_type.name}'.format(self), use_aliases=True)
+        return self.credit_type.name
+
+
 class ApiWrapper:
     def get_user_by_phone_number(self, phone_number):
         return User(user_id='1234')
@@ -42,9 +63,11 @@ class ApiWrapper:
         pass
 
     def get_user_credits(self, user_id):
-        pass
+        # TODO: use user_id
+        url = os.path.join(Api.base_url, 'Credits')
+        return [UserCredit.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()]
 
-    def get_credits_info(self):
+    def get_credit_types(self):
         url = os.path.join(Api.base_url, 'CreditTypes')
         return [CreditType.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()
                 if credit['IsActive']]
