@@ -110,6 +110,15 @@ class DialogState:
         self._state['auth_state'] = AuthState.AUTHENTICATED
         return True
 
+    def reset_auth_state(self):
+        self._state['auth_state'] = AuthState.NONE
+        self._state['phone_number'] = None
+
+    def log_out(self):
+        if not self.is_authenticated:
+            raise RuntimeError('Can not perform log out procedure. Not authenticated')
+        self.reset_auth_state()
+
     def create_credit_request(self, credit):
         # TODO: implement
         pass
