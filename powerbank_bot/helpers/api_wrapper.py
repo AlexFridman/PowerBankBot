@@ -1,3 +1,9 @@
+from collections import namedtuple
+
+Credit = namedtuple('Credit', ['name', 'currency', 'percentage', 'duration'])
+User = namedtuple('User', ['user_id'])
+
+
 class ApiWrapper:
     def __init__(self):
         self._authorise()
@@ -6,7 +12,7 @@ class ApiWrapper:
         pass
 
     def get_user_by_phone_number(self, phone_number):
-        return True
+        return User(user_id='1234')
 
     def get_user_requests(self, user_id):
         pass
@@ -16,10 +22,22 @@ class ApiWrapper:
 
     def get_credits(self):
         return [
-            {'name': '1', '%': 20},
-            {'name': '2', '%': 30},
-            {'name': '3', '%': 20},
-            {'name': '4', '%': 30},
-            {'name': '5', '%': 20},
-            {'name': '6', '%': 30},
+            Credit(
+                name='кредит 1',
+                currency='BYN',
+                percentage='15',
+                duration='24 месяца'
+            ),
+            Credit(
+                name='кредит 2',
+                currency='BYN',
+                percentage='25',
+                duration='24 месяца'
+            ),
+            Credit(
+                name='кредит 3',
+                currency='BYN',
+                percentage='35',
+                duration='24 месяца'
+            )
         ]

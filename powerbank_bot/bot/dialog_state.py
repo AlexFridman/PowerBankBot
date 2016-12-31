@@ -85,10 +85,10 @@ class DialogState:
         elif self.is_authenticated:
             raise RuntimeError('Already authenticated')
 
-        user_id = self._api_wrapper.get_user_by_phone_number(phone_number)
-        if user_id is None:
+        user = self._api_wrapper.get_user_by_phone_number(phone_number)
+        if user is None:
             raise UserNotFoundError('User with this number does not exist')
-        self._state['user_id'] = user_id
+        self._state['user_id'] = user.user_id
 
         self._state['phone_number'] = phone_number
         self._state['verification_code'] = self._generate_verification_code()
