@@ -1,35 +1,26 @@
-import functools
+import logging
+
+from powerbank_bot.config import Mongo
+
+LOGGER = logging.getLogger('Storage')
 
 
-def singleton(cls):
-    ''' Use class as singleton. '''
-
-    cls.__new_original__ = cls.__new__
-
-    @functools.wraps(cls.__new__)
-    def singleton_new(cls, *args, **kw):
-        it = cls.__dict__.get('__it__')
-        if it is not None:
-            return it
-
-        cls.__it__ = it = cls.__new_original__(cls, *args, **kw)
-        it.__init_original__(*args, **kw)
-        return it
-
-    cls.__new__ = singleton_new
-    cls.__init_original__ = cls.__init__
-    cls.__init__ = object.__init__
-
-    return cls
-
-
-@singleton
 class Storage:
     def __init__(self):
-        self.data = {}
+        self._db = Mongo.get_db()
 
-    def is_authenticated_user(self, user_id):
-        return user_id in self.data
+    def get_dialog_state(self, dialog_id):
+        LOGGER.debug('Requested state loading of dialog ({})'.format(dialog_id))
+        try:
+            return self._db.dialog_state.find_one({'dialog_id': dialog_id})
+        except Exception:
+            LOGGER.exception('Failed to load state of dialog ({})'.format(dialog_id))
 
-    def authenticate_user(self, user_id):
-        self.data[user_id] = True
+    def upsert_dialog_state(self, dialog_state):
+        LOGGER.debug('Requested upsert of dialog ({}) state'.format(dialog_state['dialog_id']))
+        try:
+            self._db.dialog_state.update_one({'dialog_id': dialog_state['dialog_id']}, dialog_state, upsert=True)
+        except Exception:
+            LOGGER.exception('Failed to upsert dialog ({}) state'.format(dialog_state['dialog_id']))
+        else:
+            LOGGER.exception('Dialog ({}) state upserted successfully'.format(dialog_state['dialog_id']))
