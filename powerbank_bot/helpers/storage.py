@@ -19,7 +19,7 @@ class Storage:
     def upsert_dialog_state(self, dialog_state):
         LOGGER.debug('Requested upsert of dialog ({}) state'.format(dialog_state['dialog_id']))
         try:
-            self._db.dialog_state.update_one({'dialog_id': dialog_state['dialog_id']}, dialog_state, upsert=True)
+            self._db.dialog_state.replace_one({'dialog_id': dialog_state['dialog_id']}, dialog_state, upsert=True)
         except Exception:
             LOGGER.exception('Failed to upsert dialog ({}) state'.format(dialog_state['dialog_id']))
         else:
