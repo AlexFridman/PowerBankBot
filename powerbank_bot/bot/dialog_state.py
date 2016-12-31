@@ -52,7 +52,7 @@ class DialogState:
 
     @property
     def is_auth_locked(self):
-        return time.time() > self._state['auth_locked_till']
+        return time.time() < self._state['auth_locked_till']
 
     @property
     def dialog_id(self):
