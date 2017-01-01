@@ -90,7 +90,7 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
 
 
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
-                                                 'event_type', 'event_value', 'seen'])):
+                                                 'date_time', 'event_type', 'event_value', 'seen'])):
     event_type_map = {
         'status_update': 'Изменения статуса заявки',
         'comment_added': 'Добавлен комментарий'
@@ -104,6 +104,7 @@ class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'reques
             request_id=json['request_id'],
             credit_type_name=json['credit_type_name'],
             timestamp=json['timestamp'],
+            date_time=datetime.datetime.utcfromtimestamp(json['timestamp']),
             event_type=cls.event_type_map[json['event_type']],
             event_value=json['event_value'],
             seen=json['seen']
