@@ -6,9 +6,11 @@ from powerbank_bot.config import Mongo
 app = Flask(__name__)
 
 
-@app.route('/update', methods=['POST'])
-def update():
+@app.route('/request_update', methods=['POST'])
+def request_update():
     event = {
+        'request_id': request.form['request_id'],
+        'credit_type_name': request.form['credit_type_name'],
         'user_id': request.form['user_id'],
         'timestamp': request.form['timestamp'],
         'type': request.form['type'],
@@ -20,6 +22,7 @@ def update():
 
     updates_collection.replace_one({
         'user_id': event['user_id'],
+        'request_id': event['request_id'],
         'timestamp': event['timestamp'],
         'type': event['type']
     },
