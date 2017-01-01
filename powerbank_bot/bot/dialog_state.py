@@ -1,6 +1,6 @@
-import logging
 import time
 
+import logging
 from powerbank_bot.helpers.api_wrapper import ApiWrapper
 from powerbank_bot.helpers.storage import Storage
 
@@ -72,8 +72,12 @@ class DialogState:
         return self._state['user_id']
 
     @property
-    def phone_number(self):
-        return self._state['phone_number']
+    def login(self):
+        return self._state['login']
+
+    @property
+    def email(self):
+        return self._state['email']
 
     def lock_auth(self, seconds=HOUR):
         self._state['auth_locked_till'] = int(time.time() + seconds)

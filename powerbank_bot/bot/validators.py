@@ -61,7 +61,7 @@ class LoginValidator(BaseValidator):
         self.error = 'Введите логин'
 
     def __call__(self, value):
-        is_match = bool(len(value) > 0)
+        is_match = bool(value)
         return ValidationResult(is_match, None if is_match else self.error)
 
 
@@ -69,4 +69,3 @@ class PhoneNumberValidator(RegexpValidator):
     def __init__(self):
         super().__init__('\d{2}\s\d{7}')
         self.error = 'Номер не соответствует формату +375XX XXXXXXX'
-

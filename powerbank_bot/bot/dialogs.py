@@ -6,7 +6,7 @@ from collections import OrderedDict
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
 from powerbank_bot.bot.forms import create_form_dialog, CREDIT_FORM
-from powerbank_bot.bot.validators import PhoneNumberValidator, LoginValidator
+from powerbank_bot.bot.validators import LoginValidator
 
 logging.basicConfig(level=logging.DEBUG)
 
