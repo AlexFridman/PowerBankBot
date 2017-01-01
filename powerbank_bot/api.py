@@ -17,7 +17,8 @@ def request_update():
         'user_id': request.form['user_id'],
         'timestamp': request.form['timestamp'],
         'type': request.form['type'],
-        'value': request.form['value']
+        'value': request.form['value'],
+        'seen': False
     }
 
     db = Mongo.get_db()
