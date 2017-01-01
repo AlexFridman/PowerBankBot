@@ -1,8 +1,8 @@
 import datetime
+from collections import namedtuple
 
 import humanize
 import telegram_dialog as td
-from collections import namedtuple
 from emoji import emojize
 
 

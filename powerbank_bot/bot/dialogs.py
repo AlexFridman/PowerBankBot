@@ -5,7 +5,7 @@ import telegram_dialog as td
 
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError, ApiError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
-from powerbank_bot.bot.forms import create_form_dialog, CREDIT_FORM
+from powerbank_bot.bot.forms import create_form_dialog, create_credit_form
 from powerbank_bot.bot.validators import LoginValidator
 
 logging.basicConfig(level=logging.DEBUG)
@@ -142,7 +142,7 @@ def credit_info_dialog(dialog_state, credit_type):
 
 
 def create_credit_request_dialog(dialog_state, credit_type):
-    form = yield from create_form_dialog(CREDIT_FORM)
+    form = yield from create_form_dialog(create_credit_form(credit_type.currency))
     if form is None:
         return
     else:
