@@ -12,7 +12,7 @@ class ApiWrapper:
         url = os.path.join(Api.base_url, 'Users/GetUserIdByPhoneNumber', phone_number.replace('+', ''))
         response = requests.get(url, auth=Api.credentials)
         if response.status_code == 200:
-            return response.json()
+            return str(response.json())
 
     def get_user_requests(self, user_id):
         pass
