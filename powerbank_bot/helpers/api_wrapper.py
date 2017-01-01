@@ -11,7 +11,8 @@ class ApiWrapper:
     def get_user_by_phone_number(self, phone_number):
         url = os.path.join(Api.base_url, 'Users/GetUserIdByPhoneNumber', phone_number.replace('+', ''))
         response = requests.get(url, auth=Api.credentials)
-        # TODO: proceed response. Return None if user was not found.
+        if response.status_code == 200:
+            return response.json()
 
     def get_user_requests(self, user_id):
         pass
@@ -24,7 +25,3 @@ class ApiWrapper:
         url = os.path.join(Api.base_url, 'CreditTypes')
         return [CreditType.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()
                 if credit['IsActive']]
-
-
-if __name__ == '__main__':
-    ApiWrapper().get_user_by_phone_number('+375291301111')
