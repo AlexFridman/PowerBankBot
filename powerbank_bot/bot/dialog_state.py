@@ -1,6 +1,11 @@
 import time
-
 import logging
+
+import sendgrid
+import sendgrid.helpers.mail as sg_mail
+from random import randint
+
+from powerbank_bot.config import Email
 from powerbank_bot.helpers.api_wrapper import ApiWrapper
 from powerbank_bot.helpers.storage import Storage
 
@@ -25,6 +30,10 @@ HOUR = 60 * 60
 
 
 class UserNotFoundError(Exception):
+    pass
+
+
+class CannotSendMessageError(Exception):
     pass
 
 
@@ -83,10 +92,23 @@ class DialogState:
         self._state['auth_locked_till'] = int(time.time() + seconds)
 
     def _generate_verification_code(self):
-        return '1234'
+        return str(randint(1000, 9999))
 
     def _send_confirmation_message(self):
-        pass
+        sg = sendgrid.SendGridAPIClient(apikey=Email.api_key)
+        from_email = sg_mail.Email(Email.address, Email.sender)
+        subject = 'Код подтверждения'
+        to_email = sg_mail.Email(self._state['email'])
+        content = sg_mail.Content('text/plain', 'Ваш код подтверждения: ' + self._state['verification_code'])
+        mail = sg_mail.Mail(from_email, subject, to_email, content)
+        try:
+            response = sg.client.mail.send.post(request_body=mail.get())
+            LOGGER.debug(response.status_code)
+            LOGGER.debug(response.body)
+            LOGGER.debug(response.headers)
+        except Exception as e:
+            LOGGER.error('error')
+            raise CannotSendMessageError(e)
 
     def start_authentication(self, login):
         # TODO: add logging
@@ -96,6 +118,7 @@ class DialogState:
             raise RuntimeError('Already authenticated')
 
         user = self._api_wrapper.get_user_by_login(login)
+        LOGGER.debug(user)
         if user is None:
             raise UserNotFoundError('User with this login does not exist')
         self._state['user_id'] = user.user_id

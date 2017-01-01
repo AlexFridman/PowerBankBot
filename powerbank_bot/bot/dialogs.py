@@ -3,12 +3,13 @@ import logging
 import telegram_dialog as td
 from collections import OrderedDict
 
-from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError
+from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
 from powerbank_bot.bot.forms import create_form_dialog, CREDIT_FORM
 from powerbank_bot.bot.validators import LoginValidator
 
 logging.basicConfig(level=logging.DEBUG)
+LOGGER = logging.getLogger('dialogs')
 
 MAKE_YOUR_CHOICE_CAPTION = 'Сделайте Ваш выбор'
 
@@ -74,7 +75,12 @@ def auth_dialog(dialog_state):
             dialog_state.start_authentication(login)
         except UserNotFoundError:
             login_message = 'Пользователь с таким логином не зарегистрирован\nВведите логин'
-        except Exception:
+        except CannotSendMessageError:
+            dialog_state.reset_auth_state()
+            yield from only_back('Не удалось отправить код подтверждения. Попробуйте позже')
+            return
+        except Exception as e:
+            LOGGER.exception('error')
             dialog_state.reset_auth_state()
             yield from only_back('Произошла ошибка. Попробуйте позже')
             return
