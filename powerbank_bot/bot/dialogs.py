@@ -208,4 +208,14 @@ def user_request_info_dialog(dialog_state, request):
 
 
 def user_updates_dialog(dialog_state):
-    pass
+    updates = dialog_state.get_request_updates()
+
+    if updates:
+        message = '\n\n'.join((update.to_html() for update in updates))
+    else:
+        message = 'Новых обновлений нет'
+
+    for update in updates:
+        dialog_state.storage.mark_request_update_as_seen(update.update_id)
+
+    yield from only_back(message)

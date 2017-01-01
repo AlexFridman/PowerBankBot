@@ -37,6 +37,10 @@ class DialogState:
     def api(self):
         return self._api_wrapper
 
+    @property
+    def storage(self):
+        return self._storage
+
     @classmethod
     def load(cls, dialog_id):
         LOGGER.debug('Requested dialog ({}) state loading'.format(dialog_id))
@@ -128,3 +132,6 @@ class DialogState:
 
     def get_requests(self):
         return self._api_wrapper.get_user_requests(self.user_id)
+
+    def get_request_updates(self):
+        return self._storage.get_user_request_updates(self.user_id)
