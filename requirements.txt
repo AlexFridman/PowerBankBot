@@ -1,2 +1,4 @@
+emoji
+humanize
 pymongo
 flask
