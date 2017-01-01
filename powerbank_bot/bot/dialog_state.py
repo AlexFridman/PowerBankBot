@@ -3,6 +3,7 @@ import logging
 
 import sendgrid
 import sendgrid.helpers.mail as sg_mail
+
 from random import randint
 
 from powerbank_bot.config import Email
@@ -34,6 +35,10 @@ class UserNotFoundError(Exception):
 
 
 class CannotSendMessageError(Exception):
+    pass
+
+
+class ApiError(Exception):
     pass
 
 
@@ -111,7 +116,7 @@ class DialogState:
             LOGGER.debug(response.body)
             LOGGER.debug(response.headers)
         except Exception as e:
-            LOGGER.error('error')
+            LOGGER.error('Failed to send message')
             raise CannotSendMessageError(e)
 
     def start_authentication(self, login):
@@ -152,9 +157,12 @@ class DialogState:
             raise RuntimeError('Can not perform log out procedure. Not authenticated')
         self.reset_auth_state()
 
-    def create_credit_request(self, credit):
-        # TODO: implement
-        pass
+    def make_credit_request(self, credit_type, form):
+        try:
+            self._api_wrapper.send_request(self.user_id, credit_type, form['amount'], form['month_income'])
+        except Exception as e:
+            LOGGER.exception('Failed to send request')
+            raise ApiError(e)
 
     def get_credits(self):
         return self._api_wrapper.get_user_credits(self.user_id)

@@ -4,7 +4,7 @@ import os
 import requests
 
 from powerbank_bot.config import Api
-from powerbank_bot.helpers.models import UserCredit, CreditType, User, Request
+from powerbank_bot.helpers.models import UserCredit, CreditType, User, Request, RequestStatus
 
 
 class ApiWrapper:
@@ -32,3 +32,17 @@ class ApiWrapper:
         url = os.path.join(Api.base_url, 'CreditTypes')
         return [CreditType.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()
                 if credit['IsActive']]
+
+    def send_request(self, user_id, credit_type, amount, month_income):
+        payload = {
+            'ClientId': user_id,
+            'Type': 1,
+            'State': 0,
+            'Amount': amount,
+            'CreditTypeId': credit_type.credit_id,
+            'TypeName': credit_type.name,
+            'MonthIncome': month_income,
+            'StatusString': RequestStatus.IN_PROCESS
+        }
+        url = os.path.join(Api.base_url, 'Requests')
+        requests.post(url, auth=Api.credentials, data=payload).raise_for_status()

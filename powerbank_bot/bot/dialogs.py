@@ -1,9 +1,9 @@
 import logging
-
-import telegram_dialog as td
 from collections import OrderedDict
 
-from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError
+import telegram_dialog as td
+
+from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError, ApiError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
 from powerbank_bot.bot.forms import create_form_dialog, CREDIT_FORM
 from powerbank_bot.bot.validators import LoginValidator
@@ -119,8 +119,8 @@ def auth_dialog(dialog_state):
 
 def credit_list_dialog(dialog_state):
     while True:
-        menu = Menu([(credit_info_dialog(dialog_state, credit), credit.name)
-                     for credit in dialog_state.api.get_credit_types()], back_button=True)
+        menu = Menu([(credit_info_dialog(dialog_state, credit_type), credit_type.name)
+                     for credit_type in dialog_state.api.get_credit_types()], back_button=True)
 
         selected, _ = yield from td.require_choice('Выберите тип кредита', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
 
@@ -129,26 +129,26 @@ def credit_list_dialog(dialog_state):
         yield from menu[selected]
 
 
-def credit_info_dialog(dialog_state, credit):
+def credit_info_dialog(dialog_state, credit_type):
     menu = Menu(back_button=True)
     if dialog_state.is_authenticated:
-        menu.add_item(create_credit_request_dialog(dialog_state, credit), 'Подать заявку')
+        menu.add_item(create_credit_request_dialog(dialog_state, credit_type), 'Подать заявку')
 
-    selected, _ = yield from td.require_choice(credit.to_html(), menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+    selected, _ = yield from td.require_choice(credit_type.to_html(), menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
 
     if menu[selected] is None:
         return
     yield from menu[selected]
 
 
-def create_credit_request_dialog(dialog_state, credit):
+def create_credit_request_dialog(dialog_state, credit_type):
     form = yield from create_form_dialog(CREDIT_FORM)
     if form is None:
         return
     else:
         try:
-            dialog_state.create_credit_request(credit)
-        except:
+            dialog_state.make_credit_request(credit_type, form)
+        except ApiError:
             yield from only_back('Произошла ошибка. Попробуйте позже')
         else:
             yield 'Заявка успешно подана'

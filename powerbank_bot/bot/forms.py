@@ -16,7 +16,7 @@ class FormField:
 
 CREDIT_FORM = [
     FormField('amount', 'Укажите размер кредита', int, [RangeIntegerValidator(100, 10000)]),
-    FormField('amount', 'Укажите среднемесячный доход за последний год', int, [RangeIntegerValidator(100, 10000)])
+    FormField('month_income', 'Укажите среднемесячный доход за последний год', int, [RangeIntegerValidator(100, 10000)])
 ]
 
 
