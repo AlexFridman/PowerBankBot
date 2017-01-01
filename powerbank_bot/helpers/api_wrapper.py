@@ -4,7 +4,7 @@ import os
 import requests
 
 from powerbank_bot.config import Api
-from powerbank_bot.helpers.models import UserCredit, CreditType, User
+from powerbank_bot.helpers.models import UserCredit, CreditType, User, Request
 
 
 class ApiWrapper:
@@ -15,7 +15,8 @@ class ApiWrapper:
             return User(user_id=str(response.json()))
 
     def get_user_requests(self, user_id):
-        pass
+        url = os.path.join(Api.base_url, 'Requests/GetForUser', user_id)
+        return [Request.from_json(request) for request in requests.get(url, auth=Api.credentials).json()]
 
     def get_user_credits(self, user_id):
         url = os.path.join(Api.base_url, 'Credits/GetForUser', user_id)
