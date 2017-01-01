@@ -32,7 +32,7 @@ class Storage:
         try:
             return [RequestUpdate.from_json(update) for update in
                     self._db.updates.find({'user_id': user_id, 'seen': False}, limit=limit)
-                        .sort('timestamp', pymongo.DESCENDING)]
+                        .sort('timestamp', pymongo.ASCENDING)]
         except:
             LOGGER.exception('Failed to retrieve user ({}) request updates'.format(user_id))
 
