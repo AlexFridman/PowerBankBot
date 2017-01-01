@@ -125,3 +125,6 @@ class DialogState:
 
     def get_credits(self):
         return self._api_wrapper.get_user_credits(self.user_id)
+
+    def get_requests(self):
+        return self._api_wrapper.get_user_requests(self.user_id)
