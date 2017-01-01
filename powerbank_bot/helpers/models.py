@@ -84,7 +84,8 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
 
     @property
     def credit_name(self):
-        # TODO: add status dependent emoji
+        # TODO: add status dependent emoji. Maybe amount also should be added, because it is hard to distinguish
+        # request only by name.
         return self.credit_type_name
 
 
