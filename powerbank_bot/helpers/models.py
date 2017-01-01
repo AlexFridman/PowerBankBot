@@ -1,8 +1,8 @@
 import datetime
+from collections import namedtuple
 
 import humanize
 import telegram_dialog as td
-from collections import namedtuple
 from emoji import emojize
 
 User = namedtuple('User', ['user_id'])
@@ -90,8 +90,25 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
 
 
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
-                                                 'type', 'value', 'seen'])):
+                                                 'event_type', 'event_value', 'seen'])):
+    event_type_map = {
+        'status_update': 'Изменения статуса заявки',
+        'comment_added': 'Добавлен комментарий'
+    }
+
     @classmethod
     def from_json(cls, json):
-        # TODO: implement
-        pass
+        return cls(
+            update_id=json['update_id'],
+            user_id=json['user_id'],
+            request_id=json['request_id'],
+            credit_type_name=json['credit_type_name'],
+            timestamp=json['timestamp'],
+            event_type=cls.event_type_map[json['event_type']],
+            event_value=json['event_value'],
+            seen=json['seen']
+        )
+
+    def to_html(self):
+        return td.HTML(('<b>{0.event_type}</b>\n'
+                        '{0.event_value}').format(self))
