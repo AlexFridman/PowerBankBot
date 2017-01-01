@@ -9,6 +9,7 @@ from powerbank_bot.helpers.models import User, UserCredit, CreditType
 
 class ApiWrapper:
     def get_user_by_phone_number(self, phone_number):
+        # TODO: implement
         return User(user_id='1234')
 
     def get_user_requests(self, user_id):
