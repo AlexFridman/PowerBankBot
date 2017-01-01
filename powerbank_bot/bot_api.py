@@ -1,3 +1,5 @@
+import calendar
+import datetime
 import uuid
 
 from flask import Flask
@@ -8,16 +10,23 @@ from powerbank_bot.config import Mongo, BotApi
 app = Flask(__name__)
 
 
+def dt_to_timestamp(dt):
+    return calendar.timegm(dt.timetuple())
+
+
 @app.route('/request_update', methods=['POST'])
 def request_update():
+    data = request.get_json()
+    dt = datetime.datetime.strptime(data['timestamp'][:19], '%Y-%m-%dT%H:%M:%S')
+
     event = {
         'update_id': str(uuid.uuid4()),
-        'request_id': request.form['request_id'],
-        'credit_type_name': request.form['credit_type_name'],
-        'user_id': request.form['user_id'],
-        'timestamp': request.form['timestamp'],
-        'type': request.form['type'],
-        'value': request.form['value'],
+        'request_id': data['request_id'],
+        'credit_type_name': data['credit_type_name'],
+        'user_id': data['user_id'],
+        'timestamp': dt_to_timestamp(dt),
+        'type': data['type'],
+        'value': data['value'],
         'seen': False
     }
 
