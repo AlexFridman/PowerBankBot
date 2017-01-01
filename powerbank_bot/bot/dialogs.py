@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger('dialogs')
 
 MAKE_YOUR_CHOICE_CAPTION = 'Сделайте Ваш выбор'
+GENERAL_ERROR_CAPTION = 'Произошла ошибка. Попробуйте позже'
 
 
 class Menu:
@@ -82,7 +83,7 @@ def auth_dialog(dialog_state):
         except Exception as e:
             LOGGER.exception('error')
             dialog_state.reset_auth_state()
-            yield from only_back('Произошла ошибка. Попробуйте позже')
+            yield from only_back(GENERAL_ERROR_CAPTION)
             return
         else:
             break
@@ -149,7 +150,7 @@ def create_credit_request_dialog(dialog_state, credit_type):
         try:
             dialog_state.make_credit_request(credit_type, form)
         except ApiError:
-            yield from only_back('Произошла ошибка. Попробуйте позже')
+            yield from only_back(GENERAL_ERROR_CAPTION)
         else:
             yield 'Заявка успешно подана'
             # TODO: scoring form should be here
@@ -181,8 +182,12 @@ def personal_account_dialog(dialog_state):
 
 def user_credit_list_dialog(dialog_state):
     while True:
-        menu = Menu([(user_credit_info_dialog(dialog_state, credit), credit.name)
-                     for credit in dialog_state.get_credits()], back_button=True)
+        try:
+            menu = Menu([(user_credit_info_dialog(dialog_state, credit), credit.name)
+                         for credit in dialog_state.get_credits()], back_button=True)
+        except ApiError:
+            yield from only_back(GENERAL_ERROR_CAPTION)
+            return
 
         selected, _ = yield from td.require_choice('Выберите кредит', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
 
@@ -197,8 +202,12 @@ def user_credit_info_dialog(dialog_state, credit):
 
 def user_requests_dialog(dialog_state):
     while True:
-        menu = Menu([(user_request_info_dialog(dialog_state, request), request.credit_name)
-                     for request in dialog_state.get_requests()], back_button=True)
+        try:
+            menu = Menu([(user_request_info_dialog(dialog_state, request), request.credit_name)
+                         for request in dialog_state.get_requests()], back_button=True)
+        except ApiError:
+            yield from only_back(GENERAL_ERROR_CAPTION)
+            return
 
         selected, _ = yield from td.require_choice('Выберите заявку', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
 
@@ -212,7 +221,11 @@ def user_request_info_dialog(dialog_state, request):
 
 
 def user_updates_dialog(dialog_state):
-    updates = dialog_state.get_request_updates()
+    try:
+        updates = dialog_state.get_request_updates()
+    except ApiError:
+        yield from only_back(GENERAL_ERROR_CAPTION)
+        return
 
     if updates:
         message = '\n\n'.join((update.to_html() for update in updates))
