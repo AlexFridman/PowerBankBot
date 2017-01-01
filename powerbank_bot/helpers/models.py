@@ -107,10 +107,6 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
 
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
                                                  'date_time', 'event_type', 'event_value', 'seen'])):
-    event_type_map = {
-        'status_update': 'Изменения статуса заявки',
-        'comment_added': 'Добавлен комментарий'
-    }
 
     @classmethod
     def from_json(cls, json):
@@ -121,22 +117,23 @@ class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'reques
             credit_type_name=json['credit_type_name'],
             timestamp=json['timestamp'],
             date_time=datetime.datetime.utcfromtimestamp(json['timestamp']),
-            event_type=cls.event_type_map[json['event_type']],
+            event_type=json['event_type'],
             event_value=json['event_value'],
             seen=json['seen']
         )
 
     def to_html(self):
+        print(self.event_type)
         humanize.i18n.activate('ru_RU')
         humanized_time = humanize.naturaltime(self.date_time)
         if self.event_type == 'comment_added':
-            return emojize(td.HTML(('<b>Добавлен комментарий</b> :speech_balloon:\n'
-                                    'к завке на кредит "{0.credit_type_name}":\n'
-                                    '<pre>{0.event_value}</pre>\n'
-                                    '{1}').format(self, humanized_time)), use_aliases=True)
+            return emojize(('<b>Добавлен комментарий</b> :speech_balloon:\n'
+                            'к завке на кредит "{0.credit_type_name}":\n'
+                            '<pre>{0.event_value}</pre>\n'
+                            '{1}').format(self, humanized_time), use_aliases=True)
         elif self.event_type == 'status_update':
-            return emojize(td.HTML(('<b>Обновлён статус заявки</b> {0}\n'
-                                    'на кредит "{1.credit_type_name}"\n'
-                                    '{2}').format(RequestStatus.status_to_emoji(self.event_value), self,
-                                                  humanized_time)), use_aliases=True)
+            return emojize(('<b>Обновлён статус заявки</b> {0}\n'
+                            'на кредит "{1.credit_type_name}"\n'
+                            '{2}').format(RequestStatus.status_to_emoji(self.event_value), self,
+                                          humanized_time), use_aliases=True)
         raise NotImplementedError()

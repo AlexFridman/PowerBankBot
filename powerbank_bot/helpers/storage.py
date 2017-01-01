@@ -2,6 +2,7 @@ import logging
 
 import pymongo
 
+from powerbank_bot.helpers.models import RequestUpdate
 from powerbank_bot.config import Mongo
 
 LOGGER = logging.getLogger('Storage')
@@ -29,8 +30,9 @@ class Storage:
 
     def get_user_request_updates(self, user_id, limit=20):
         try:
-            return list(self._db.updates.find({'user_id': user_id, 'seen': False}, limit=limit)
-                        .sort('timestamp', pymongo.DESCENDING))
+            return [RequestUpdate.from_json(update) for update in
+                    self._db.updates.find({'user_id': user_id, 'seen': False}, limit=limit)
+                        .sort('timestamp', pymongo.ASCENDING)]
         except:
             LOGGER.exception('Failed to retrieve user ({}) request updates'.format(user_id))
 
