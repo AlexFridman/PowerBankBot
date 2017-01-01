@@ -56,3 +56,11 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
                         'процент: <i>{0.percent}%</i>\n'
                         'срок: <i>{0.duration}</i>\n'
                         '<pre>{0.description}</pre>').format(self.credit_type))
+
+
+class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
+                                                 'type', 'value', 'seen'])):
+    @classmethod
+    def from_json(cls, json):
+        # TODO: implement
+        pass
