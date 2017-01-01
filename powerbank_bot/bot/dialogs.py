@@ -70,6 +70,8 @@ def auth_dialog(dialog_state):
             # "back" button pressed
             return
 
+        phone_number = '375 {}'.format(phone_number).replace(' ', '')
+
         try:
             dialog_state.start_authentication(phone_number)
         except UserNotFoundError:
@@ -159,7 +161,8 @@ def personal_account_dialog(dialog_state):
     menu = Menu(
         [
             (user_credit_list_dialog(dialog_state), 'Кредиты'),
-            (credit_requests_dialog(dialog_state), 'Заявки')
+            (credit_requests_dialog(dialog_state), 'Заявки'),
+            (user_updates_dialog(dialog_state), 'Обновления')
         ],
         back_button=True
     )
@@ -190,3 +193,7 @@ def user_credit_info_dialog(dialog_state, credit):
 
 def credit_requests_dialog(dialog_state):
     yield from only_back()
+
+
+def user_updates_dialog(dialog_state):
+    pass
