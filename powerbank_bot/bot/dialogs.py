@@ -35,7 +35,7 @@ class Menu:
 
 @td.requires_personal_chat('Работаю tet-a-tet')
 def main_menu_dialog(start_message):
-    dialog_id = start_message.chat_id
+    dialog_id = start_message.from_user.id
     dialog_state = DialogState.load(dialog_id)
 
     while True:
@@ -228,9 +228,9 @@ def user_updates_dialog(dialog_state):
         return
 
     if updates:
-        message = '\n\n'.join((update.to_html() for update in updates))
+        message = td.HTML('\n\n'.join((update.to_html() for update in updates)))
     else:
-        message = 'Новых обновлений нет'
+        message = 'Новых обновлений нет ¯\_(ツ)_/¯'
 
     for update in updates:
         dialog_state.storage.mark_request_update_as_seen(update.update_id)
