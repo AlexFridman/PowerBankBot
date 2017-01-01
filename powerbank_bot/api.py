@@ -1,3 +1,5 @@
+import uuid
+
 from flask import Flask
 from flask import request
 
@@ -9,6 +11,7 @@ app = Flask(__name__)
 @app.route('/request_update', methods=['POST'])
 def request_update():
     event = {
+        'id': str(uuid.uuid4()),
         'request_id': request.form['request_id'],
         'credit_type_name': request.form['credit_type_name'],
         'user_id': request.form['user_id'],
