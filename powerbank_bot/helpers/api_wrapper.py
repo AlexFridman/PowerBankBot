@@ -4,7 +4,7 @@ import os
 import requests
 
 from powerbank_bot.config import Api
-from powerbank_bot.helpers.models import UserCredit, CreditType
+from powerbank_bot.helpers.models import UserCredit, CreditType, User
 
 
 class ApiWrapper:
@@ -12,7 +12,7 @@ class ApiWrapper:
         url = os.path.join(Api.base_url, 'Users/GetUserIdByPhoneNumber', phone_number.replace('+', ''))
         response = requests.get(url, auth=Api.credentials)
         if response.status_code == 200:
-            return str(response.json())
+            return User(user_id=str(response.json()))
 
     def get_user_requests(self, user_id):
         pass
