@@ -54,7 +54,7 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
     @property
     def name(self):
         if self.is_closed:
-            return emojize(':white_check_mark: {0.credit_type.name}'.format(self), use_aliases=True)
+            return emojize('{0.credit_type.name} :white_check_mark:'.format(self), use_aliases=True)
         return self.credit_type.name
 
     def to_html(self):
@@ -70,6 +70,15 @@ class RequestStatus:
     IN_PROCESS = 'Рассматривается'
     APPROVED = 'Подтверждена'
     REJECTED = 'Отклонена'
+
+    @classmethod
+    def status_to_emoji(cls, status):
+        status_emoji_map = {
+            cls.IN_PROCESS: ':clock3:',
+            cls.APPROVED: ':white_check_mark:',
+            cls.REJECTED: ':x:'
+        }
+        return status_emoji_map[status]
 
 
 class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_date', 'amount', 'status'])):
@@ -92,9 +101,8 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
 
     @property
     def credit_name(self):
-        # TODO: add status dependent emoji. Maybe amount also should be added, because it is hard to distinguish
-        # request only by name.
-        return self.credit_type_name
+        return emojize('{} {}'.format(self.credit_type_name, RequestStatus.status_to_emoji(self.status)),
+                       use_aliases=True)
 
 
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
@@ -119,9 +127,16 @@ class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'reques
         )
 
     def to_html(self):
-        # TODO: display in different style depend on event_type
-        # use https://pypi.python.org/pypi/humanize
-        # do not forget set humanize.i18n.activate('ru_RU')
-        # for example see CreditType
-        return td.HTML(('<b>{0.event_type}</b>\n'
-                        '{0.event_value}').format(self))
+        humanize.i18n.activate('ru_RU')
+        humanized_time = humanize.naturaltime(self.date_time)
+        if self.event_type == 'comment_added':
+            return emojize(td.HTML(('<b>Добавлен комментарий</b> :speech_balloon:\n'
+                                    'к завке на кредит "{0.credit_type_name}":\n'
+                                    '<pre>{0.event_value}</pre>\n'
+                                    '{1}').format(self, humanized_time)), use_aliases=True)
+        elif self.event_type == 'status_update':
+            return emojize(td.HTML(('<b>Обновлён статус заявки</b> {0}\n'
+                                    'на кредит "{1.credit_type_name}"\n'
+                                    '{2}').format(RequestStatus.status_to_emoji(self.event_value), self,
+                                                  humanized_time)), use_aliases=True)
+        raise NotImplementedError()

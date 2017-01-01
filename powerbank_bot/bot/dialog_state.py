@@ -165,10 +165,22 @@ class DialogState:
             raise ApiError(e)
 
     def get_credits(self):
-        return self._api_wrapper.get_user_credits(self.user_id)
+        try:
+            return self._api_wrapper.get_user_credits(self.user_id)
+        except Exception as e:
+            LOGGER.exception('Failed to get credits')
+            raise ApiError(e)
 
     def get_requests(self):
-        return self._api_wrapper.get_user_requests(self.user_id)
+        try:
+            return self._api_wrapper.get_user_requests(self.user_id)
+        except Exception as e:
+            LOGGER.exception('Failed to get requests')
+            raise ApiError(e)
 
     def get_request_updates(self):
-        return self._storage.get_user_request_updates(self.user_id)
+        try:
+            return self._storage.get_user_request_updates(self.user_id)
+        except Exception as e:
+            LOGGER.exception('Failed to get updates')
+            raise ApiError(e)

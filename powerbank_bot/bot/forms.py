@@ -14,10 +14,12 @@ class FormField:
         return text_question(self.description, self.validators, show_back_button)
 
 
-CREDIT_FORM = [
-    FormField('amount', 'Укажите размер кредита', int, [RangeIntegerValidator(100, 10000)]),
-    FormField('month_income', 'Укажите среднемесячный доход за последний год', int, [RangeIntegerValidator(100, 10000)])
-]
+def create_credit_form(currency):
+    return [
+        FormField('amount', 'Укажите размер кредита, {}'.format(currency), int, [RangeIntegerValidator(100, 10000)]),
+        FormField('month_income', 'Укажите среднемесячный доход за последний год', int,
+                  [RangeIntegerValidator(100, 10000)])
+    ]
 
 
 def create_form_dialog(schema, accept_back=True):
