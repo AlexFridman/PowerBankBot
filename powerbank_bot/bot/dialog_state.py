@@ -68,7 +68,7 @@ class DialogState:
 
     @property
     def user_id(self):
-        return self._state['dialog_id']
+        return self._state['user_id']
 
     @property
     def phone_number(self):
