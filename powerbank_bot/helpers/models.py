@@ -58,6 +58,36 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
                         '<pre>{0.description}</pre>').format(self.credit_type))
 
 
+class RequestStatus:
+    IN_PROCESS = 'Рассматривается'
+    APPROVED = 'Подтверждена'
+    REJECTED = 'Отклонена'
+
+
+class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_date', 'amount', 'status'])):
+    # TODO: add scoring staff
+    @classmethod
+    def from_json(cls, json):
+        return Request(
+            request_id=json['Id'],
+            credit_type_name=json['TypeName'],
+            request_date=json['FormattedDate'][:10],
+            amount=json['Amount'],
+            status=json['StatusString']
+        )
+
+    def to_html(self):
+        return td.HTML(('<b>{0.credit_type_name}</b>\n'
+                        'сумма: <i>{0.amount}</i>\n'
+                        'дата подачи: <i>{0.request_date}%</i>\n'
+                        'статус: <i>{0.status}</i>').format(self))
+
+    @property
+    def credit_name(self):
+        # TODO: add status dependent emoji
+        return self.credit_type_name
+
+
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
                                                  'type', 'value', 'seen'])):
     @classmethod
