@@ -161,7 +161,7 @@ def personal_account_dialog(dialog_state):
     menu = Menu(
         [
             (user_credit_list_dialog(dialog_state), 'Кредиты'),
-            (credit_requests_dialog(dialog_state), 'Заявки'),
+            (user_requests_dialog(dialog_state), 'Заявки'),
             (user_updates_dialog(dialog_state), 'Обновления')
         ],
         back_button=True
@@ -191,8 +191,20 @@ def user_credit_info_dialog(dialog_state, credit):
     yield from only_back(credit.to_html())
 
 
-def credit_requests_dialog(dialog_state):
-    yield from only_back()
+def user_requests_dialog(dialog_state):
+    while True:
+        menu = Menu([(user_request_info_dialog(dialog_state, request), request.credit_name)
+                     for request in dialog_state.get_requests()], back_button=True)
+
+        selected, _ = yield from td.require_choice('Выберите заявку', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+
+        if menu[selected] is None:
+            return
+        yield from menu[selected]
+
+
+def user_request_info_dialog(dialog_state, request):
+    yield from only_back(request.to_html())
 
 
 def user_updates_dialog(dialog_state):
