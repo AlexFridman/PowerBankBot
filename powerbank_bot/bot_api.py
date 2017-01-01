@@ -25,8 +25,8 @@ def request_update():
         'credit_type_name': data['credit_type_name'],
         'user_id': data['user_id'],
         'timestamp': dt_to_timestamp(dt),
-        'type': data['type'],
-        'value': data['value'],
+        'event_type': data['type'],
+        'event_value': data['value'],
         'seen': False
     }
 
@@ -37,7 +37,7 @@ def request_update():
         'user_id': event['user_id'],
         'request_id': event['request_id'],
         'timestamp': event['timestamp'],
-        'type': event['type']
+        'event_type': event['type']
     },
         event,
         upsert=True
