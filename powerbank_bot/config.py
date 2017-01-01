@@ -28,3 +28,8 @@ class Mongo(object):
 class Api:
     credentials = ('client', 'clientclientclient')
     base_url = 'http://pb.somee.com/api'
+
+
+class BotApi:
+    host = '0.0.0.0'
+    port = 5000

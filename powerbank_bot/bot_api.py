@@ -3,7 +3,7 @@ import uuid
 from flask import Flask
 from flask import request
 
-from powerbank_bot.config import Mongo
+from powerbank_bot.config import Mongo, BotApi
 
 app = Flask(__name__)
 
@@ -37,4 +37,4 @@ def request_update():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(BotApi.host, BotApi.port)
