@@ -2,4 +2,5 @@ emoji
 humanize
 pymongo
 flask
+sendgrid
 requests

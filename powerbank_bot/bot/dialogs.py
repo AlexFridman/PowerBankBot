@@ -3,12 +3,13 @@ import logging
 import telegram_dialog as td
 from collections import OrderedDict
 
-from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError
+from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
 from powerbank_bot.bot.forms import create_form_dialog, CREDIT_FORM
-from powerbank_bot.bot.validators import PhoneNumberValidator
+from powerbank_bot.bot.validators import LoginValidator
 
 logging.basicConfig(level=logging.DEBUG)
+LOGGER = logging.getLogger('dialogs')
 
 MAKE_YOUR_CHOICE_CAPTION = 'Сделайте Ваш выбор'
 
@@ -57,26 +58,29 @@ def auth_dialog(dialog_state):
     enter_phone_number_trials_count = 3
     enter_verification_code_trials_count = 3
 
-    phone_number_message = 'Введите номер телефона (375 XX XXXXXX)'
+    login_message = 'Введите логин'
 
     for _ in range(enter_phone_number_trials_count):
-        phone_number = yield from text_question(
-            phone_number_message,
-            [PhoneNumberValidator()],
+        login = yield from text_question(
+            login_message,
+            [LoginValidator()],
             show_back_button=True
         )
 
-        if not phone_number:
+        if not login:
             # "back" button pressed
             return
 
-        phone_number = '375 {}'.format(phone_number).replace(' ', '')
-
         try:
-            dialog_state.start_authentication(phone_number)
+            dialog_state.start_authentication(login)
         except UserNotFoundError:
-            phone_number_message = 'Пользователь с таким номерорм не зарегистрирован\nВведите номер телефона'
-        except Exception:
+            login_message = 'Пользователь с таким логином не зарегистрирован\nВведите логин'
+        except CannotSendMessageError:
+            dialog_state.reset_auth_state()
+            yield from only_back('Не удалось отправить код подтверждения. Попробуйте позже')
+            return
+        except Exception as e:
+            LOGGER.exception('error')
             dialog_state.reset_auth_state()
             yield from only_back('Произошла ошибка. Попробуйте позже')
             return

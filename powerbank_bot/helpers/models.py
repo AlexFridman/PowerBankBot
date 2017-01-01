@@ -5,7 +5,15 @@ import humanize
 import telegram_dialog as td
 from emoji import emojize
 
-User = namedtuple('User', ['user_id'])
+
+class User(namedtuple('Credit', ['user_id', 'login', 'email'])):
+    @classmethod
+    def from_json(cls, json):
+        return cls(
+            user_id=str(json['UserId']),
+            login=json['Login'],
+            email=json['Email']
+        )
 
 
 class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'currency', 'percent',
