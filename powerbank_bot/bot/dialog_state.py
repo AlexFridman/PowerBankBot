@@ -15,7 +15,8 @@ class AuthState:
 
 INITIAL_DIALOG_STATE = {
     'user_id': None,
-    'phone_number': None,
+    'login': None,
+    'email': None,
     'is_authenticated': False,
     'auth_locked_till': 0,
     'auth_state': AuthState.NONE
@@ -83,19 +84,20 @@ class DialogState:
     def _send_confirmation_message(self):
         pass
 
-    def start_authentication(self, phone_number):
+    def start_authentication(self, login):
         # TODO: add logging
         if self.is_auth_locked:
             raise RuntimeError('Auth locked till {}'.format(self._state['auth_locked_till']))
         elif self.is_authenticated:
             raise RuntimeError('Already authenticated')
 
-        user = self._api_wrapper.get_user_by_phone_number(phone_number)
+        user = self._api_wrapper.get_user_by_login(login)
         if user is None:
-            raise UserNotFoundError('User with this number does not exist')
+            raise UserNotFoundError('User with this login does not exist')
         self._state['user_id'] = user.user_id
 
-        self._state['phone_number'] = phone_number
+        self._state['login'] = login
+        self._state['email'] = user.email
         self._state['verification_code'] = self._generate_verification_code()
         self._send_confirmation_message()
         self._state['auth_state'] = AuthState.CODE_SENT
