@@ -37,7 +37,7 @@ def request_update():
         'user_id': event['user_id'],
         'request_id': event['request_id'],
         'timestamp': event['timestamp'],
-        'event_type': event['type']
+        'event_type': event['event_type']
     },
         event,
         upsert=True
