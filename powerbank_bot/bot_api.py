@@ -23,7 +23,7 @@ def request_update():
         'update_id': str(uuid.uuid4()),
         'request_id': data['request_id'],
         'credit_type_name': data['credit_type_name'],
-        'user_id': data['user_id'],
+        'user_id': str(data['user_id']),
         'timestamp': dt_to_timestamp(dt),
         'event_type': data['type'],
         'event_value': data['value'],
