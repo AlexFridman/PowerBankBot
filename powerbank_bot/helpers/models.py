@@ -98,8 +98,30 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
 
 
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
-                                                 'type', 'value', 'seen'])):
+                                                 'date_time', 'event_type', 'event_value', 'seen'])):
+    event_type_map = {
+        'status_update': 'Изменения статуса заявки',
+        'comment_added': 'Добавлен комментарий'
+    }
+
     @classmethod
     def from_json(cls, json):
-        # TODO: implement
-        pass
+        return cls(
+            update_id=json['update_id'],
+            user_id=json['user_id'],
+            request_id=json['request_id'],
+            credit_type_name=json['credit_type_name'],
+            timestamp=json['timestamp'],
+            date_time=datetime.datetime.utcfromtimestamp(json['timestamp']),
+            event_type=cls.event_type_map[json['event_type']],
+            event_value=json['event_value'],
+            seen=json['seen']
+        )
+
+    def to_html(self):
+        # TODO: display in different style depend on event_type
+        # use https://pypi.python.org/pypi/humanize
+        # do not forget set humanize.i18n.activate('ru_RU')
+        # for example see CreditType
+        return td.HTML(('<b>{0.event_type}</b>\n'
+                        '{0.event_value}').format(self))
