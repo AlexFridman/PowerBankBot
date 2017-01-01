@@ -110,5 +110,6 @@ class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'reques
         )
 
     def to_html(self):
+        # TODO: display in different style depend on event_type
         return td.HTML(('<b>{0.event_type}</b>\n'
                         '{0.event_value}').format(self))
