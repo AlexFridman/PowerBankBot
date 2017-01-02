@@ -37,5 +37,8 @@ def select_question(question, choices, show_back_button=False):
 
     (selected, _), _ = yield from td.require_choice(question, markup, MAKE_YOUR_CHOICE_CAPTION)
 
-    if selected:
+    if show_back_button:
+        selected -= 1
+
+    if selected >= 0:
         return selected
