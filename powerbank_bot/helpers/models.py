@@ -1,10 +1,13 @@
 import datetime
 from collections import namedtuple
+import html
 
 import humanize
 import telegram_dialog as td
 from babel.dates import format_date, parse_date
 from emoji import emojize
+
+from powerbank_bot.bot.forms import SCORING_FORM, SelectFormField, FormField
 
 
 class User(namedtuple('Credit', ['user_id', 'login', 'email'])):
@@ -152,3 +155,25 @@ class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'reques
                             '{2}').format(RequestStatus.status_to_emoji(self.event_value), self,
                                           humanized_time), use_aliases=True)
         raise NotImplementedError()
+
+
+class ScoringForm(dict):
+    def __init__(self, form):
+        super().__init__(**form)
+
+    def to_html(self):
+        template = '<b>{field}</b>:\t<code>{value}</code>'
+        rows = []
+        for field in SCORING_FORM:
+            if isinstance(field, SelectFormField):
+                value = field.choices[self[field.name]]
+            elif isinstance(field, FormField):
+                value = self[field.name]
+            else:
+                raise NotImplementedError()
+            rows.append(template.format(field=html.escape(field.description), value=html.escape(str(value))))
+
+        return td.HTML('Скоринговая форма\n' +
+                       '\n'.join(rows) +
+                       '\n-----------------\n' +
+                       template.format(field='Результат', value='{:.0%}'.format(self['result'])))

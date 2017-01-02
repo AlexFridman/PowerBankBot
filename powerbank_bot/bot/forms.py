@@ -34,7 +34,6 @@ def create_credit_form(currency):
 SCORING_FORM = [
     SelectFormField('status_of_existing_checking_account', 'Статус текущего счета',
                     ['... < 0 руб.', '0 <= ... < 200 руб.', '... >= 200 руб.', 'нет счета']),
-    FormField('duration_in_month', 'Срок в месяцах', int, [RangeIntegerValidator(4, 120)]),
     SelectFormField('credit_history', 'Кредитная история',
                     ['кредиты не брались / все кредиты погашены',
                      'все кредиты в нашем банке выплачивались своевременно', 'текущие кредиты выплачиваются вовремя',
@@ -50,7 +49,6 @@ SCORING_FORM = [
                                         'переквалификация',
                                         'бизнес',
                                         'другое']),
-    FormField('credit_amount', 'Размер кредита (руб.)', int, [RangeIntegerValidator(250, 18400)]),
     SelectFormField('savings_account', 'Текущий счет', ['... < 100 руб.',
                                                         '100 <= ... < 500 руб.',
                                                         '500 <= ... < 1000 руб.',
