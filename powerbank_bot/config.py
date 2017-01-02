@@ -39,3 +39,6 @@ class Email:
     api_key = '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'
     address = 'bsuir.power.bank@gmail.com'
     sender = 'Power Bank'
+
+class Telegram:
+    token = '300227038:AAEqqG_KMPhuq-eydlsT94TMY8eY46WRhjE'

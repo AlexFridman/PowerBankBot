@@ -2,10 +2,11 @@ import logging
 import time
 from random import randint
 
+import requests
 import sendgrid
 import sendgrid.helpers.mail as sg_mail
 
-from powerbank_bot.config import Email
+from powerbank_bot.config import Email, BotApi
 from powerbank_bot.helpers.api_wrapper import ApiWrapper
 from powerbank_bot.helpers.storage import Storage
 
@@ -184,4 +185,13 @@ class DialogState:
             return self._storage.get_user_request_updates(self.user_id)
         except Exception as e:
             LOGGER.exception('Failed to get updates')
+            raise ApiError(e)
+
+    @staticmethod
+    def get_prediction(form):
+        try:
+            # TODO: assume bot api is running on the same machine
+            return requests.get('http://localhost:{port}/predict_proba'.format(port=BotApi.port),
+                                data=form).json()['prob']
+        except Exception as e:
             raise ApiError(e)

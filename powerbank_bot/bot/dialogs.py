@@ -6,7 +6,6 @@ import telegram_dialog as td
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError, ApiError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
 from powerbank_bot.bot.forms import create_form_dialog, create_credit_form, SCORING_FORM
-from powerbank_bot.bot.scoring_model import ScoringModel
 from powerbank_bot.bot.validators import LoginValidator
 from powerbank_bot.helpers.models import ScoringForm
 
@@ -180,8 +179,8 @@ def fill_scoring_form(dialog_state, request_id):
     form['duration_in_month'] = credit_type.duration_in_month
 
     try:
-        form['result'] = ScoringModel().predict(form)
-    except:
+        form['result'] = dialog_state.get_prediction(form)
+    except ApiError:
         yield from only_back(GENERAL_ERROR_CAPTION)
     else:
         dialog_state.storage.update_scoring_form(form)

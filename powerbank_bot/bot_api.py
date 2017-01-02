@@ -2,19 +2,19 @@ import calendar
 import datetime
 import uuid
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask import request
 
 from powerbank_bot.config import Mongo, BotApi
 
-app = Flask(__name__)
+bot_api_app = Flask(__name__)
 
 
 def dt_to_timestamp(dt):
     return calendar.timegm(dt.timetuple())
 
 
-@app.route('/request_update', methods=['POST'])
+@bot_api_app.route('/request_update', methods=['POST'])
 def request_update():
     data = request.get_json()
     dt = datetime.datetime.strptime(data['timestamp'][:19], '%Y-%m-%dT%H:%M:%S')
@@ -45,5 +45,12 @@ def request_update():
     return 'OK'
 
 
+@bot_api_app.route('/predict_proba')
+def predict_proba():
+    scoring_form = request.get_json()
+    prob = 0.8
+    return jsonify(prob=prob)
+
+
 if __name__ == '__main__':
-    app.run(BotApi.host, BotApi.port)
+    bot_api_app.run(BotApi.host, BotApi.port)

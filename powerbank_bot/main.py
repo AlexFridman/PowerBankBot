@@ -1,8 +1,14 @@
+from multiprocessing import Process
+
+import telegram_dialog as td
+
 from powerbank_bot.bot.dialogs import main_menu_dialog
+from powerbank_bot.bot_api import bot_api_app
+from powerbank_bot.config import BotApi, Telegram
 
 if __name__ == '__main__':
-    TOKEN = '300227038:AAEqqG_KMPhuq-eydlsT94TMY8eY46WRhjE'
-    import telegram_dialog as td
+    api_process = Process(target=bot_api_app.run, args=(BotApi.host, BotApi.port))
+    api_process.start()
 
-    dialog_bot = td.DialogBot(TOKEN, main_menu_dialog)
+    dialog_bot = td.DialogBot(Telegram.token, main_menu_dialog)
     dialog_bot.start()
