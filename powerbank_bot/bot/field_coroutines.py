@@ -1,5 +1,6 @@
 import telegram_dialog as td
 
+MAKE_YOUR_CHOICE_CAPTION = 'Сделайте Ваш выбор'
 BACK_BUTTON_CONTENT = 'Назад'
 BACK = -1
 
@@ -26,3 +27,15 @@ def text_question(question, validators=None, show_back_button=False):
                 break
         else:
             return answer['text']
+
+
+def select_question(question, choices, show_back_button=False):
+    markup = [[choice] for choice in choices]
+
+    if show_back_button:
+        markup = [[BACK_BUTTON_CONTENT]] + markup
+
+    (selected, _), _ = yield from td.require_choice(question, markup, MAKE_YOUR_CHOICE_CAPTION)
+
+    if selected:
+        return selected
