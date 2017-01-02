@@ -104,6 +104,7 @@ class DialogState:
         return str(randint(1000, 9999))
 
     def _send_confirmation_message(self):
+        LOGGER.debug(self._state['verification_code'])
         sg = sendgrid.SendGridAPIClient(apikey=Email.api_key)
         from_email = sg_mail.Email(Email.address, Email.sender)
         subject = 'Код подтверждения'
