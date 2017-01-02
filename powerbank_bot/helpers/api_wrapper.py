@@ -25,9 +25,19 @@ class ApiWrapper:
         url = os.path.join(Api.base_url, 'Requests/GetForUser', user_id)
         return [Request.from_json(request) for request in requests.get(url, auth=Api.credentials).json()]
 
+    def get_request(self, user_id, request_id):
+        for request in self.get_user_requests(user_id):
+            if request.request_id == request_id:
+                return request
+
     def get_user_credits(self, user_id):
         url = os.path.join(Api.base_url, 'Credits/GetForUser', user_id)
         return [UserCredit.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()]
+
+    def get_credit(self, user_id, credit_id):
+        for credit in self.get_user_credits(user_id):
+            if credit.credit_id == credit_id:
+                return credit
 
     def get_credit_types(self):
         url = os.path.join(Api.base_url, 'CreditTypes')
