@@ -34,7 +34,7 @@ class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'curr
     def from_json(cls, json):
         humanize.i18n.activate('ru_RU')
         return cls(
-            credit_id=json['Id'],
+            credit_id=str(json['Id']),
             name=json['Name'],
             description=json['Description'],
             currency=json['CurrencyShort'],
