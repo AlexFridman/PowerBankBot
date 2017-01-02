@@ -1,10 +1,9 @@
-import time
 import logging
+import time
+from random import randint
 
 import sendgrid
 import sendgrid.helpers.mail as sg_mail
-
-from random import randint
 
 from powerbank_bot.config import Email
 from powerbank_bot.helpers.api_wrapper import ApiWrapper
@@ -158,9 +157,9 @@ class DialogState:
             raise RuntimeError('Can not perform log out procedure. Not authenticated')
         self.reset_auth_state()
 
-    def make_credit_request(self, credit_type, form):
+    def make_credit_request(self, credit_type, form, return_id=False):
         try:
-            self._api_wrapper.send_request(self.user_id, credit_type, form['amount'], form['month_income'])
+            self._api_wrapper.send_request(self.user_id, credit_type, form['amount'], form['month_income'], return_id)
         except Exception as e:
             LOGGER.exception('Failed to send request')
             raise ApiError(e)
