@@ -44,6 +44,11 @@ class ApiWrapper:
         return [CreditType.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()
                 if credit['IsActive']]
 
+    def get_credit_type(self, credit_type_id):
+        for credit_type in self.get_credit_types():
+            if credit_type.credit_id == credit_type_id:
+                return credit_type
+
     def send_request(self, user_id, credit_type, amount, month_income, return_id=False):
         if return_id:
             existing_ids = {r.request_id for r in self.get_user_requests(user_id)}
