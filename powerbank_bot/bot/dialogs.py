@@ -154,7 +154,7 @@ def create_credit_request_dialog(dialog_state, credit_type):
         return
     else:
         try:
-            dialog_state.make_credit_request(credit_type, form)
+            request_id = dialog_state.make_credit_request(credit_type, form, return_id=True)
         except ApiError:
             yield from only_back(GENERAL_ERROR_CAPTION)
         else:
@@ -162,13 +162,23 @@ def create_credit_request_dialog(dialog_state, credit_type):
                                                        td.Keyboard(['Да', 'Нет'], resize_keyboard=True),
                                                        MAKE_YOUR_CHOICE_CAPTION)
             if selected == 0:
-                # TODO: get valid request id
-                yield from fill_scoring_form(dialog_state, '58')
+                yield from fill_scoring_form(dialog_state, request_id)
 
 
 def fill_scoring_form(dialog_state, request_id):
+    try:
+        request = dialog_state.api.get_request(dialog_state.user_id, request_id)
+        credit_type = dialog_state.api.get_credit_type(request.credit_type_id)
+    except:
+        yield from only_back(GENERAL_ERROR_CAPTION)
+        return
+
     form = yield from create_form_dialog(SCORING_FORM)
+
     form['request_id'] = request_id
+    form['credit_amount'] = request.amount
+    form['duration_in_month'] = credit_type.duration_in_month
+
     try:
         form['result'] = ScoringModel().predict(form)
     except:
@@ -245,7 +255,8 @@ def user_request_info_dialog(dialog_state, request):
     if form:
         menu.add_item(only_back(form.to_html()), 'Показать скоринговую форму')
     else:
-        menu.add_item(fill_scoring_form(dialog_state, request.request_id), 'Заполнить скоринговую форму')
+        menu.add_item(fill_scoring_form(dialog_state, request.request_id),
+                      'Заполнить скоринговую форму')
 
     selected, _ = yield from td.require_choice(request.to_html(), menu.get_keyboard(), MAKE_YOUR_CHOICE_CAPTION)
 
