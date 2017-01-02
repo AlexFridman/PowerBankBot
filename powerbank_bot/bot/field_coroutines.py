@@ -12,7 +12,7 @@ def text_question(question, validators=None, show_back_button=False):
         if error:
             q = error + '\n' + question
         if show_back_button:
-            answer = yield td.HTML(q), [BACK_BUTTON_CONTENT]
+            answer = yield td.HTML(q), td.Keyboard([BACK_BUTTON_CONTENT], resize_keyboard=True)
         else:
             answer = yield td.HTML(q)
 
