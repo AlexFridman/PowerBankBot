@@ -1,7 +1,7 @@
 import logging
-from collections import OrderedDict
 
 import telegram_dialog as td
+from collections import OrderedDict
 
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError, ApiError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
@@ -163,16 +163,16 @@ def log_out_dialog(dialog_state):
 
 
 def personal_account_dialog(dialog_state):
-    menu = Menu(
-        [
-            (user_credit_list_dialog(dialog_state), 'Кредиты'),
-            (user_requests_dialog(dialog_state), 'Заявки'),
-            (user_updates_dialog(dialog_state), 'Обновления')
-        ],
-        back_button=True
-    )
-
     while True:
+        menu = Menu(
+            [
+                (user_credit_list_dialog(dialog_state), 'Кредиты'),
+                (user_requests_dialog(dialog_state), 'Заявки'),
+                (user_updates_dialog(dialog_state), 'Обновления')
+            ],
+            back_button=True
+        )
+
         selected, _ = yield from td.require_choice('Личный кабинет', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
 
         if menu[selected] is None:
