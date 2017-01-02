@@ -4,3 +4,4 @@ pymongo
 flask
 sendgrid
 requests
+babel

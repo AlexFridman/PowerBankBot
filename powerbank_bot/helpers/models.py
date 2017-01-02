@@ -3,6 +3,7 @@ from collections import namedtuple
 
 import humanize
 import telegram_dialog as td
+from babel.dates import format_date, parse_date
 from emoji import emojize
 
 
@@ -39,16 +40,22 @@ class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'curr
         )
 
 
-class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_date', 'end_date', 'main_debt'])):
+class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_date', 'end_date', 'main_debt',
+                                           'start_amount', 'monthly_payment', 'monthly_main_debt',
+                                           'monthly_percentage_debt', 'penalty_fee'])):
     @classmethod
     def from_json(cls, json):
-        humanize.i18n.activate('ru_RU')
         return UserCredit(
             credit_type=CreditType.from_json(json['CreditType']),
             is_closed=json['IsClosed'],
-            start_date=humanize.naturaldate(datetime.datetime.strptime(json['FormattedStartDate'][:10], '%d.%m.%Y')),
-            end_date=humanize.naturaldate(datetime.datetime.strptime(json['FormattedEndDate'][:10], '%d.%m.%Y')),
-            main_debt=json['MainDebt']
+            start_date=format_date(parse_date(json['FormattedStartDate'][:10], locale='de_DE'), locale='ru_RU'),
+            end_date=format_date(parse_date(json['FormattedEndDate'][:10], locale='de_DE'), locale='ru_RU'),
+            main_debt=json['MainDebt'],
+            start_amount=json['StartAmount'],
+            monthly_payment=json['CalculatedMonthlyPayment'],
+            monthly_main_debt=json['MonthlyMainDebt'],
+            monthly_percentage_debt=json['MonthlyPercentageDebt'],
+            penalty_fee=json['PenaltyFee']
         )
 
     @property
@@ -58,12 +65,21 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
         return self.credit_type.name
 
     def to_html(self):
-        # TODO: replace with real template string
         return td.HTML(('<b>{0.name}</b>\n'
-                        'валюта: <i>{0.currency}</i>\n'
-                        'процент: <i>{0.percent}%</i>\n'
-                        'срок: <i>{0.duration}</i>\n'
-                        '<pre>{0.description}</pre>').format(self.credit_type))
+                        'валюта: <i>{0.credit_type.currency}</i>\n'
+                        'процент: <i>{0.credit_type.percent}%</i>\n'
+                        'открыт: <i>{0.start_date}</i>\n'
+                        'дата завершения: <i>{0.end_date}</i>\n'
+                        'взятая сумма: <code>{0.start_amount:.2f}</code>\n'
+                        'ежемесячный платеж: <code>{0.monthly_payment:.2f}</code>\n'
+                        'остаток основного долга: <code>{0.main_debt:.2f}</code>\n'
+                        'к оплате: <code>{1:.2f}</code> '
+                        '(Основной долг - <code>{0.monthly_main_debt:.2f}</code>, '
+                        'Проценты - <code>{0.monthly_percentage_debt:.2f}</code>, '
+                        'Пеня - <code>{0.penalty_fee:.2f}</code>)\n'
+                        '<pre>{0.credit_type.description}</pre>').format(self, self.monthly_main_debt +
+                                                                         self.monthly_percentage_debt +
+                                                                         self.penalty_fee))
 
 
 class RequestStatus:
@@ -107,7 +123,6 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
 
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
                                                  'date_time', 'event_type', 'event_value', 'seen'])):
-
     @classmethod
     def from_json(cls, json):
         return cls(
