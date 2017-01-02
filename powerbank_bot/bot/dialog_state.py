@@ -159,7 +159,8 @@ class DialogState:
 
     def make_credit_request(self, credit_type, form, return_id=False):
         try:
-            self._api_wrapper.send_request(self.user_id, credit_type, form['amount'], form['month_income'], return_id)
+            return self._api_wrapper.send_request(self.user_id, credit_type, form['amount'],
+                                                  form['month_income'], return_id)
         except Exception as e:
             LOGGER.exception('Failed to send request')
             raise ApiError(e)
