@@ -22,7 +22,7 @@ class User(namedtuple('Credit', ['user_id', 'login', 'email'])):
 
 
 class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'currency', 'percent',
-                                       'overdue_percent', 'duration', 'duration_in_months'])):
+                                       'overdue_percent', 'duration', 'duration_in_month'])):
     def to_html(self):
         return td.HTML(('<b>{0.name}</b>\n'
                         'валюта: <i>{0.currency}</i>\n'
@@ -41,7 +41,7 @@ class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'curr
             percent=round(json['Percent'] * 100),
             overdue_percent=json['OverduePercent'],
             duration=humanize.naturaldelta(datetime.timedelta(days=int(json['ReturnTerm'].split('.')[0]))),
-            duration_in_months=math.ceil(datetime.timedelta(days=int(json['ReturnTerm'].split('.')[0])).days / 30.5)
+            duration_in_month=math.ceil(datetime.timedelta(days=int(json['ReturnTerm'].split('.')[0])).days / 30.5)
         )
 
 
