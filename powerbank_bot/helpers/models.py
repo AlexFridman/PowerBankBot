@@ -1,6 +1,6 @@
 import datetime
-from collections import namedtuple
 import html
+from collections import namedtuple
 
 import humanize
 import telegram_dialog as td
@@ -100,13 +100,14 @@ class RequestStatus:
         return status_emoji_map[status]
 
 
-class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_date', 'amount', 'status'])):
-    # TODO: add scoring staff
+class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'credit_type_id', 'request_date',
+                                     'amount', 'status'])):
     @classmethod
     def from_json(cls, json):
         return Request(
             request_id=str(json['Id']),
             credit_type_name=json['TypeName'],
+            credit_type_id=str(json['CreditTypeId']),
             request_date=json['FormattedDate'][:10],
             amount=json['Amount'],
             status=json['StatusString']
