@@ -70,15 +70,16 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
                         'процент: <i>{0.credit_type.percent}%</i>\n'
                         'открыт: <i>{0.start_date}</i>\n'
                         'дата завершения: <i>{0.end_date}</i>\n'
-                        'взятая сумма: <i>{0.start_amount}</i>\n'
-                        'ежемесячный платеж: <i>{0.monthly_payment}</i>\n'
-                        'остаток основного долга: <i>{0.main_debt}</i>\n'
-                        'к оплате: <i>{1}</i> '
-                        '(Основной долг - <i>{0.monthly_main_debt}</i>, '
-                        'Проценты - <i>{0.monthly_percentage_debt}</i>, '
-                        'Пеня - <i>{0.penalty_fee}</i>)\n'
-                        '<pre>{0.credit_type.description}</pre>').format(self,
-                                                                         self.monthly_main_debt + self.monthly_percentage_debt + self.penalty_fee))
+                        'взятая сумма: <code>{0.start_amount:.2f}</code>\n'
+                        'ежемесячный платеж: <code>{0.monthly_payment:.2f}</code>\n'
+                        'остаток основного долга: <code>{0.main_debt:.2f}</code>\n'
+                        'к оплате: <code>{1:.2f}</code> '
+                        '(Основной долг - <code>{0.monthly_main_debt:.2f}</code>, '
+                        'Проценты - <code>{0.monthly_percentage_debt:.2f}</code>, '
+                        'Пеня - <code>{0.penalty_fee:.2f}</code>)\n'
+                        '<pre>{0.credit_type.description}</pre>').format(self, self.monthly_main_debt +
+                                                                         self.monthly_percentage_debt +
+                                                                         self.penalty_fee))
 
 
 class RequestStatus:
