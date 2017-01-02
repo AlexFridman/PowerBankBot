@@ -55,7 +55,7 @@ def main_menu_dialog(start_message):
 
 
 def only_back(message='Только назад'):
-    return td.require_choice(message, td.Keyboard([BACK_BUTTON_CONTENT]), 'Только назад')
+    return td.require_choice(message, td.Keyboard([BACK_BUTTON_CONTENT], resize_keyboard=True), 'Только назад')
 
 
 def auth_dialog(dialog_state):
