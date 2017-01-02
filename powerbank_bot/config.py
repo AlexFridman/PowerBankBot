@@ -1,3 +1,6 @@
+import os
+import sys
+
 import pymongo
 
 
@@ -33,12 +36,14 @@ class Api:
 class BotApi:
     host = '0.0.0.0'
     port = 5000
+    scoring_model_path = os.path.join(os.path.dirname(sys.modules[__name__].__file__), 'model.p')
 
 
 class Email:
     api_key = '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'
     address = 'bsuir.power.bank@gmail.com'
     sender = 'Power Bank'
+
 
 class Telegram:
     token = '300227038:AAEqqG_KMPhuq-eydlsT94TMY8eY46WRhjE'

@@ -11,5 +11,10 @@ def reqs(f):
 setup(
     name='powerbank_bot',
     author='alfrid',
-    install_requires=reqs('requirements.txt')
+    install_requires=reqs('requirements.txt'),
+    entry_points={
+        'console_scripts': [
+            'run_bot=powerbank_bot.main:main'
+        ]
+    }
 )

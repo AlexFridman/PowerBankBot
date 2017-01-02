@@ -191,7 +191,7 @@ class DialogState:
     def get_prediction(form):
         try:
             # TODO: assume bot api is running on the same machine
-            return requests.get('http://localhost:{port}/predict_proba'.format(port=BotApi.port),
-                                data=form).json()['prob']
+            return requests.post('http://localhost:{port}/predict_proba'.format(port=BotApi.port),
+                                 json=form).json()['prob']
         except Exception as e:
             raise ApiError(e)
