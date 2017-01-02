@@ -102,7 +102,7 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'request_
     @classmethod
     def from_json(cls, json):
         return Request(
-            request_id=json['Id'],
+            request_id=str(json['Id']),
             credit_type_name=json['TypeName'],
             request_date=json['FormattedDate'][:10],
             amount=json['Amount'],
