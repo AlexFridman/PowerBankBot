@@ -5,8 +5,10 @@ import telegram_dialog as td
 
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError, ApiError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
-from powerbank_bot.bot.forms import create_form_dialog, create_credit_form
+from powerbank_bot.bot.forms import create_form_dialog, create_credit_form, SCORING_FORM
+from powerbank_bot.bot.scoring_model import ScoringModel
 from powerbank_bot.bot.validators import LoginValidator
+from powerbank_bot.helpers.models import ScoringForm
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger('dialogs')
@@ -156,8 +158,24 @@ def create_credit_request_dialog(dialog_state, credit_type):
         except ApiError:
             yield from only_back(GENERAL_ERROR_CAPTION)
         else:
-            yield 'Заявка успешно подана'
-            # TODO: scoring form should be here
+            selected, _ = yield from td.require_choice('Заявка успешно подана. Хотите заполнить скоринговую форму?',
+                                                       td.Keyboard(['Да', 'Нет'], resize_keyboard=True),
+                                                       MAKE_YOUR_CHOICE_CAPTION)
+            if selected == 0:
+                # TODO: get valid request id
+                yield from fill_scoring_form(dialog_state, '58')
+
+
+def fill_scoring_form(dialog_state, request_id):
+    form = yield from create_form_dialog(SCORING_FORM)
+    form['request_id'] = request_id
+    try:
+        form['result'] = ScoringModel().predict(form)
+    except:
+        yield from only_back(GENERAL_ERROR_CAPTION)
+    else:
+        dialog_state.storage.update_scoring_form(form)
+        yield from only_back(ScoringForm(form).to_html())
 
 
 def log_out_dialog(dialog_state):
@@ -221,7 +239,19 @@ def user_requests_dialog(dialog_state):
 
 
 def user_request_info_dialog(dialog_state, request):
-    yield from only_back(request.to_html())
+    menu = Menu(back_button=True)
+
+    form = dialog_state.storage.get_scoring_form(request.request_id)
+    if form:
+        menu.add_item(only_back(form.to_html()), 'Показать скоринговую форму')
+    else:
+        menu.add_item(fill_scoring_form(dialog_state, request.request_id), 'Заполнить скоринговую форму')
+
+    selected, _ = yield from td.require_choice(request.to_html(), menu.get_keyboard(), MAKE_YOUR_CHOICE_CAPTION)
+
+    if menu[selected] is None:
+        return
+    yield from menu[selected]
 
 
 def user_updates_dialog(dialog_state):

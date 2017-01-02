@@ -2,7 +2,7 @@ import logging
 
 import pymongo
 
-from powerbank_bot.helpers.models import RequestUpdate
+from powerbank_bot.helpers.models import RequestUpdate, ScoringForm
 from powerbank_bot.config import Mongo
 
 LOGGER = logging.getLogger('Storage')
@@ -41,3 +41,17 @@ class Storage:
             self._db.updates.update_one({'update_id': update_id}, {'$set': {'seen': True}}, upsert=False)
         except:
             LOGGER.exception('Failed mark request update ({}) as seen'.format(update_id))
+
+    def get_scoring_form(self, request_id):
+        try:
+            form = self._db.scoring_forms.find_one({'request_id': request_id})
+            if form:
+                return ScoringForm(form)
+        except:
+            LOGGER.exception('Failed get scoring form ({})'.format(request_id))
+
+    def update_scoring_form(self, form):
+        try:
+            form = self._db.scoring_forms.replace_one({'request_id': form['request_id']}, form, upsert=True)
+        except:
+            LOGGER.exception('Failed update scoring form ({})'.format(form['request_id']))
