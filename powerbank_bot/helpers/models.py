@@ -108,6 +108,7 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'credit_t
             request_id=str(json['Id']),
             credit_type_name=json['TypeName'],
             credit_type_id=str(json['CreditTypeId']),
+            credit_id=str(json['CreditId']),
             request_date=json['FormattedDate'][:10],
             amount=json['Amount'],
             status=json['StatusString']
