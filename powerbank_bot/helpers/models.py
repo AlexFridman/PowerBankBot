@@ -45,10 +45,11 @@ class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'curr
 
 class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_date', 'end_date', 'main_debt',
                                            'start_amount', 'monthly_payment', 'monthly_main_debt',
-                                           'monthly_percentage_debt', 'penalty_fee'])):
+                                           'monthly_percentage_debt', 'penalty_fee', 'credit_id'])):
     @classmethod
     def from_json(cls, json):
         return UserCredit(
+            credit_id=str(json['Id']),
             credit_type=CreditType.from_json(json['CreditType']),
             is_closed=json['IsClosed'],
             start_date=format_date(parse_date(json['FormattedStartDate'][:10], locale='de_DE'), locale='ru_RU'),
