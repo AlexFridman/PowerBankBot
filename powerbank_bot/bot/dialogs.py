@@ -1,7 +1,7 @@
 import logging
+from collections import OrderedDict
 
 import telegram_dialog as td
-from collections import OrderedDict
 
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError, ApiError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
@@ -32,6 +32,9 @@ class Menu:
     def get_menu(self):
         return [[display_name] for _, (_, display_name) in self.items.items()]
 
+    def get_keyboard(self):
+        return td.Keyboard(self.get_menu(), resize_keyboard=True)
+
 
 @td.requires_personal_chat('Работаю tet-a-tet')
 def main_menu_dialog(start_message):
@@ -47,12 +50,12 @@ def main_menu_dialog(start_message):
         elif not dialog_state.is_auth_locked:
             menu.add_item(auth_dialog(dialog_state), 'Авторизация')
 
-        selected, _ = yield from td.require_choice('Главное меню', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+        selected, _ = yield from td.require_choice('Главное меню', menu.get_keyboard(), MAKE_YOUR_CHOICE_CAPTION)
         yield from menu[selected]
 
 
 def only_back(message='Только назад'):
-    return td.require_choice(message, [BACK_BUTTON_CONTENT], 'Только назад')
+    return td.require_choice(message, td.Keyboard([BACK_BUTTON_CONTENT]), 'Только назад')
 
 
 def auth_dialog(dialog_state):
@@ -90,7 +93,7 @@ def auth_dialog(dialog_state):
     else:
         dialog_state.lock_auth()
         dialog_state.save()
-        yield 'Количество попыток превышено. Попробуйте позже', ['Меню']
+        yield from only_back('Количество попыток превышено. Попробуйте позже')
         return
 
     verification_code_message = 'Введите проверочный код'
@@ -114,7 +117,7 @@ def auth_dialog(dialog_state):
     else:
         dialog_state.lock_auth()
         dialog_state.save()
-        yield 'Количество попыток превышено. Попробуйте позже', ['Меню']
+        yield from only_back('Количество попыток превышено. Попробуйте позже')
         return
 
 
@@ -123,7 +126,8 @@ def credit_list_dialog(dialog_state):
         menu = Menu([(credit_info_dialog(dialog_state, credit_type), credit_type.name)
                      for credit_type in dialog_state.api.get_credit_types()], back_button=True)
 
-        selected, _ = yield from td.require_choice('Выберите тип кредита', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+        selected, _ = yield from td.require_choice('Выберите тип кредита', menu.get_keyboard(),
+                                                   MAKE_YOUR_CHOICE_CAPTION)
 
         if menu[selected] is None:
             return
@@ -135,7 +139,7 @@ def credit_info_dialog(dialog_state, credit_type):
     if dialog_state.is_authenticated:
         menu.add_item(create_credit_request_dialog(dialog_state, credit_type), 'Подать заявку')
 
-    selected, _ = yield from td.require_choice(credit_type.to_html(), menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+    selected, _ = yield from td.require_choice(credit_type.to_html(), menu.get_keyboard(), MAKE_YOUR_CHOICE_CAPTION)
 
     if menu[selected] is None:
         return
@@ -173,7 +177,7 @@ def personal_account_dialog(dialog_state):
             back_button=True
         )
 
-        selected, _ = yield from td.require_choice('Личный кабинет', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+        selected, _ = yield from td.require_choice('Личный кабинет', menu.get_keyboard(), MAKE_YOUR_CHOICE_CAPTION)
 
         if menu[selected] is None:
             return
@@ -189,7 +193,7 @@ def user_credit_list_dialog(dialog_state):
             yield from only_back(GENERAL_ERROR_CAPTION)
             return
 
-        selected, _ = yield from td.require_choice('Выберите кредит', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+        selected, _ = yield from td.require_choice('Выберите кредит', menu.get_keyboard(), MAKE_YOUR_CHOICE_CAPTION)
 
         if menu[selected] is None:
             return
@@ -209,7 +213,7 @@ def user_requests_dialog(dialog_state):
             yield from only_back(GENERAL_ERROR_CAPTION)
             return
 
-        selected, _ = yield from td.require_choice('Выберите заявку', menu.get_menu(), MAKE_YOUR_CHOICE_CAPTION)
+        selected, _ = yield from td.require_choice('Выберите заявку', menu.get_keyboard(), MAKE_YOUR_CHOICE_CAPTION)
 
         if menu[selected] is None:
             return
