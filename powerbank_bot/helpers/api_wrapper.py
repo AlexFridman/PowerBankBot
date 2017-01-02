@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import requests
 
 from powerbank_bot.config import Api
@@ -33,7 +34,10 @@ class ApiWrapper:
         return [CreditType.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()
                 if credit['IsActive']]
 
-    def send_request(self, user_id, credit_type, amount, month_income):
+    def send_request(self, user_id, credit_type, amount, month_income, return_id=False):
+        if return_id:
+            existing_ids = {r.request_id for r in self.get_user_requests(user_id)}
+
         payload = {
             'ClientId': user_id,
             'Type': 1,
@@ -46,3 +50,7 @@ class ApiWrapper:
         }
         url = os.path.join(Api.base_url, 'Requests')
         requests.post(url, auth=Api.credentials, data=payload).raise_for_status()
+
+        if return_id:
+            new_ids = {r.request_id for r in self.get_user_requests(user_id)}
+            return min(new_ids - existing_ids)
