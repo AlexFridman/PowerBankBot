@@ -49,13 +49,11 @@ def to_feature_vector(form):
     for field_name, conf in schema:
         value = form[field_name]
 
-        if conf is None:
+        if conf in (None, 'b'):
             values.append(value)
-        elif conf == 'b':
-            values.append(value - 1)
         else:
             cat_value = [0] * conf
-            cat_value[value - 1] = 1
+            cat_value[value] = 1
             values.extend(cat_value)
 
     return np.array(values)
