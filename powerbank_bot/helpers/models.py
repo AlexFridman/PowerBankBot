@@ -11,13 +11,18 @@ from emoji import emojize
 from powerbank_bot.bot.forms import SCORING_FORM, SelectFormField, FormField
 
 
-class User(namedtuple('Credit', ['user_id', 'login', 'email'])):
+class User(namedtuple('Credit', ['user_id', 'login', 'email', 'age'])):
+    @staticmethod
+    def calc_user_age(birth_date):
+        return (datetime.datetime.utcnow() - birth_date).days / 365
+
     @classmethod
     def from_json(cls, json):
         return cls(
             user_id=str(json['UserId']),
             login=json['Login'],
-            email=json['Email']
+            email=json['Email'],
+            age=cls.calc_user_age(datetime.datetime.strptime(json['UserBirthDate'][:10], '%Y-%m-%d'))
         )
 
 

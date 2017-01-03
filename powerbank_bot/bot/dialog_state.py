@@ -23,6 +23,7 @@ INITIAL_DIALOG_STATE = {
     'user_id': None,
     'login': None,
     'email': None,
+    'age': None,
     'is_authenticated': False,
     'auth_locked_till': 0,
     'auth_state': AuthState.NONE
@@ -97,6 +98,10 @@ class DialogState:
     def email(self):
         return self._state['email']
 
+    @property
+    def age(self):
+        return self._state['age']
+
     def lock_auth(self, seconds=HOUR):
         self._state['auth_locked_till'] = int(time.time() + seconds)
 
@@ -135,6 +140,8 @@ class DialogState:
 
         self._state['login'] = login
         self._state['email'] = user.email
+        self._state['age'] = user.age
+
         self._state['verification_code'] = self._generate_verification_code()
         self._send_confirmation_message()
         self._state['auth_state'] = AuthState.CODE_SENT
