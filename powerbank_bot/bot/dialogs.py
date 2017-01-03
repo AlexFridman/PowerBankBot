@@ -169,6 +169,9 @@ def fill_scoring_form(dialog_state, request_id):
     try:
         request = dialog_state.api.get_request(dialog_state.user_id, request_id)
         credit_type = dialog_state.api.get_credit_type(request.credit_type_id)
+
+        if not all((request, credit_type)):
+            raise RuntimeError('Both request and credit type are needed for scoring process')
     except:
         yield from only_back(GENERAL_ERROR_CAPTION)
         return
