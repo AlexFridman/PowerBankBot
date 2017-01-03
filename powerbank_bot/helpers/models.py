@@ -27,7 +27,7 @@ class CreditType(namedtuple('Credit', ['credit_id', 'name', 'description', 'curr
         return td.HTML(('<b>{0.name}</b>\n'
                         'валюта: <i>{0.currency}</i>\n'
                         'процент: <i>{0.percent}%</i>\n'
-                        'срок: <i>{0.duration}</i>\n'
+                        # do not show loan, because api is shitty 'срок: <i>{0.duration}</i>\n'
                         '<pre>{0.description}</pre>').format(self))
 
     @classmethod
