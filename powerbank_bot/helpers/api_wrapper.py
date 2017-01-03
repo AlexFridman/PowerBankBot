@@ -33,7 +33,9 @@ class ApiWrapper:
 
     def get_request(self, request_id):
         url = os.path.join(Api.base_url, 'Requests', 'get', request_id)
-        return [Request.from_json(request) for request in requests.get(url, auth=Api.credentials).json()]
+        response = requests.get(url, auth=Api.credentials)
+        if response.status_code == 200:
+            return Request.from_json(response.json())
 
     def get_user_credits(self, user_id):
         url = os.path.join(Api.base_url, 'Credits/GetForUsers', user_id)
