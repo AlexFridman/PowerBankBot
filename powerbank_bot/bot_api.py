@@ -22,7 +22,7 @@ class ScoringModel:
             self.model = pickle.load(f)
 
     def predict_proba(self, x):
-        return 1 - self.model.predict_proba(x.reshape(1, -1)).ravel()[0]
+        return self.model.predict_proba(x.reshape(1, -1)).ravel()[0]
 
 
 def to_feature_vector(form):
