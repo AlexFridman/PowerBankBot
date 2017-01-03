@@ -8,7 +8,7 @@ from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, Canno
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
 from powerbank_bot.bot.forms import create_form_dialog, create_credit_form, SCORING_FORM
 from powerbank_bot.bot.validators import LoginValidator
-from powerbank_bot.helpers.models import ScoringForm
+from powerbank_bot.helpers.models import ScoringForm, RequestStatus
 
 logging.basicConfig(level=logging.DEBUG)
 LOGGER = logging.getLogger('dialogs')
@@ -206,7 +206,7 @@ def personal_account_dialog(dialog_state):
         menu = Menu(
             [
                 (user_credit_list_dialog(dialog_state), 'Кредиты'),
-                (user_requests_dialog(dialog_state), 'Заявки'),
+                (user_request_list_dialog(dialog_state), 'Заявки'),
                 (user_updates_dialog(dialog_state), 'Обновления')
             ],
             back_button=True
@@ -235,7 +235,7 @@ def user_credit_list_dialog(dialog_state):
         yield from menu[selected]
 
 
-def user_requests_dialog(dialog_state):
+def user_request_list_dialog(dialog_state):
     while True:
         try:
             menu = Menu([(user_request_info_dialog(dialog_state, request), request.name)
@@ -257,7 +257,7 @@ def user_request_info_dialog(dialog_state, request):
     form = dialog_state.storage.get_scoring_form(request.request_id)
     if form:
         menu.add_item(only_back(form.to_html()), 'Показать скоринговую форму')
-    else:
+    elif request.status == RequestStatus.IN_PROCESS:
         menu.add_item(fill_scoring_form(dialog_state, request.request_id),
                       'Заполнить скоринговую форму')
 
