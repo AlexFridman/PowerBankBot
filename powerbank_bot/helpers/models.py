@@ -66,7 +66,7 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
 
     @property
     def name(self):
-        loan_term = '{0.start_date} — {0.end_date}\t'.format(self)
+        loan_term = '{0.start_date} - {0.end_date}  '.format(self)
 
         if self.is_closed:
             return loan_term + emojize('{0.credit_type.name} :white_check_mark:'.format(self), use_aliases=True)

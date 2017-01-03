@@ -215,7 +215,7 @@ def personal_account_dialog(dialog_state):
 def user_credit_list_dialog(dialog_state):
     while True:
         try:
-            menu = Menu([(user_credit_info_dialog(dialog_state, credit), credit.name)
+            menu = Menu([(only_back(credit.to_html()), credit.name)
                          for credit in dialog_state.get_credits()], back_button=True)
         except ApiError:
             yield from only_back(GENERAL_ERROR_CAPTION)
@@ -226,11 +226,6 @@ def user_credit_list_dialog(dialog_state):
         if menu[selected] is None:
             return
         yield from menu[selected]
-
-
-def user_credit_info_dialog(dialog_state, credit):
-    yield from only_back(credit.to_html())
-
 
 def user_requests_dialog(dialog_state):
     while True:
