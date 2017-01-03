@@ -175,6 +175,9 @@ def fill_scoring_form(dialog_state, request_id):
 
     form = yield from create_form_dialog(SCORING_FORM)
 
+    if form is None:
+        return
+
     form['request_id'] = request_id
     form['credit_amount'] = request.amount
     form['duration_in_month'] = credit_type.duration_in_month
@@ -226,6 +229,7 @@ def user_credit_list_dialog(dialog_state):
         if menu[selected] is None:
             return
         yield from menu[selected]
+
 
 def user_requests_dialog(dialog_state):
     while True:
