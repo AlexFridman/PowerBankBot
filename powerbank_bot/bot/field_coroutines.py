@@ -36,7 +36,8 @@ def select_question(question, choices, show_back_button=False):
     if show_back_button:
         markup = [[BACK_BUTTON_CONTENT]] + markup
 
-    (selected, _), _ = yield from td.require_choice(question, markup, MAKE_YOUR_CHOICE_CAPTION)
+    (selected, _), _ = yield from td.require_choice(question, td.Keyboard(markup, resize_keyboard=True),
+                                                    MAKE_YOUR_CHOICE_CAPTION)
 
     if show_back_button:
         selected -= 1
