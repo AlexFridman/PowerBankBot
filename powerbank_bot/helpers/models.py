@@ -14,7 +14,7 @@ from powerbank_bot.bot.forms import SCORING_FORM, SelectFormField, FormField
 class User(namedtuple('Credit', ['user_id', 'login', 'email', 'age'])):
     @staticmethod
     def calc_user_age(birth_date):
-        return (datetime.datetime.utcnow() - birth_date).days / 365
+        return int((datetime.datetime.utcnow() - birth_date).days / 365)
 
     @classmethod
     def from_json(cls, json):
