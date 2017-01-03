@@ -187,7 +187,7 @@ def fill_scoring_form(dialog_state, request_id):
     form['duration_in_month'] = credit_type.duration_in_month
 
     try:
-        form['result'] = dialog_state.get_prediction(form)
+        form['result'], form['dummy_result'] = dialog_state.get_prediction(form)
     except ApiError:
         yield from only_back(GENERAL_ERROR_CAPTION)
     else:

@@ -1,7 +1,7 @@
 import logging
 import time
-from random import randint
 
+from random import randint
 import requests
 import sendgrid
 import sendgrid.helpers.mail as sg_mail
@@ -204,7 +204,8 @@ class DialogState:
     def get_prediction(form):
         try:
             # TODO: assume bot api is running on the same machine
-            return requests.post('http://localhost:{port}/predict_proba'.format(port=BotApi.port),
-                                 json=form).json()['prob']
+            response = requests.post('http://localhost:{port}/predict_proba'.format(port=BotApi.port),
+                                     json=form).json()
+            return response['prob'], response['dummy_prob']
         except Exception as e:
             raise ApiError(e)

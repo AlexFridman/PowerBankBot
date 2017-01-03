@@ -193,4 +193,5 @@ class ScoringForm(dict):
         return td.HTML('Скоринговая форма\n' +
                        '\n'.join(rows) +
                        '\n-----------------\n' +
-                       template.format(field='Результат', value='{:.0%}'.format(self['result'])))
+                       template.format(field='Результат',
+                                       value='{0:.0%} / {1:.0%}'.format(self['result'], self['dummy_result'])))

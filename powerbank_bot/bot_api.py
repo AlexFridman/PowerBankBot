@@ -24,6 +24,43 @@ class ScoringModel:
     def predict_proba(self, x):
         return self.model.predict_proba(x.reshape(1, -1)).ravel()[0]
 
+    def predict_dummy_proba(self, form, use_weights=True):
+        schema = [
+            ('age', None, [[25, 56], [0.6, 0.8, 0.3]], 1.2),
+            ('credit_amount', None, None, 0),
+            ('credit_history', 5, [0.8, 0.9, 0.9, 0.4, 0.2], 1.3),
+            ('duration_in_month', None, None, 0),
+            ('foreign_worker', 'b', [0.7, 0.4], 0.5),
+            ('housing', 3, [0.4, 0.8, 0.3], 1),
+            ('installment_plans', 3, [0.5, 0.4, 0.5], 0.5),
+            ('job', 4, [0.2, 0.4, 0.6, 0.8], 1.1),
+            ('other_debtors', 3, [0.2, 0.6, 0.5], 1),
+            ('personal_status', 5, [0.5, 0.4, 0.6, 0.8, 0.5], 1.2),
+            ('present_employment_since', 5, [0.2, 0.3, 0.5, 0.7, 0.9], 1.3),
+            ('property', 4, [0.8, 0.7, 0.7, 0.4], 1.3),
+            ('purpose', 11, [0.5] * 11, 0),
+            ('status_of_existing_checking_account', 4, [0.4, 0.6, 0.8, 0.5], 1.5),
+            ('telephone', 'b', [0.8, 0.4], 0.5)
+        ]
+
+        x = 1
+        y = 0
+        for field_name, conf, classifier, weight in schema:
+            if not use_weights:
+                weight = 1
+            value = form[field_name]
+            y += weight
+            if conf is None:
+                if classifier is None:
+                    coef = 0.5
+                else:
+                    thresholds, weights = classifier
+                    coef = weights[len([i for i in thresholds if i < value])]
+            else:
+                coef = classifier[value]
+            x *= (coef ** weight)
+        return x ** (1 / y)
+
 
 def to_feature_vector(form):
     schema = [
@@ -95,7 +132,8 @@ def predict_proba():
     scoring_form = request.get_json()
     x = to_feature_vector(scoring_form)
     prob = bot_api_app.scoring_model.predict_proba(x)
-    return jsonify(prob=prob)
+    dummy_prob = bot_api_app.scoring_model.predict_dummy_proba(scoring_form)
+    return jsonify(prob=prob, dummy_prob=dummy_prob)
 
 
 def run_bot_api():
