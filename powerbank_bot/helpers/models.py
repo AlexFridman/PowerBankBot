@@ -127,7 +127,7 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'credit_t
     def to_html(self):
         return td.HTML(('<b>{0.credit_type_name}</b>\n'
                         'сумма: <i>{0.amount}</i>\n'
-                        'дата подачи: <i>{0.request_date}%</i>\n'
+                        'дата подачи: <i>{0.request_date}</i>\n'
                         'статус: <i>{0.status}</i>').format(self))
 
     @property
