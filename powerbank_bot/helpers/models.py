@@ -121,7 +121,7 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'credit_t
             request_date=json['FormattedDate'][:10],
             amount=json['Amount'],
             status=json['StatusString'],
-            user_id=json['UserId']
+            user_id=json['ClientId']
         )
 
     def to_html(self):
