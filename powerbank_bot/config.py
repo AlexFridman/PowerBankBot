@@ -46,4 +46,4 @@ class Email:
 
 
 class Telegram:
-    token = '300227038:AAEqqG_KMPhuq-eydlsT94TMY8eY46WRhjE'
+    token = '262842767:AAHew5VKnqW4xRNDLvUd7T6DtSEuQftRU5Y'
