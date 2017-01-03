@@ -2,6 +2,7 @@ import logging
 from collections import OrderedDict
 
 import telegram_dialog as td
+from emoji import emojize
 
 from powerbank_bot.bot.dialog_state import DialogState, UserNotFoundError, CannotSendMessageError, ApiError
 from powerbank_bot.bot.field_coroutines import text_question, BACK_BUTTON_CONTENT
@@ -47,7 +48,7 @@ def main_menu_dialog(start_message):
 
         if dialog_state.is_authenticated:
             menu.add_item(personal_account_dialog(dialog_state), 'Личный кабинет')
-            menu.add_item(log_out_dialog(dialog_state), 'Выйти')
+            menu.add_item(log_out_dialog(dialog_state), emojize('Выйти :door:', use_aliases=True))
         elif not dialog_state.is_auth_locked:
             menu.add_item(auth_dialog(dialog_state), 'Авторизация')
 

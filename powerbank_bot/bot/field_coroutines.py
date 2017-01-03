@@ -1,7 +1,8 @@
 import telegram_dialog as td
+from emoji import emojize
 
 MAKE_YOUR_CHOICE_CAPTION = 'Сделайте Ваш выбор'
-BACK_BUTTON_CONTENT = 'Назад'
+BACK_BUTTON_CONTENT = emojize(':back:', use_aliases=True)
 BACK = -1
 
 
