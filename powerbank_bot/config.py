@@ -36,7 +36,7 @@ class Api:
 class BotApi:
     host = '0.0.0.0'
     port = 5000
-    scoring_model_path = os.path.join(os.path.dirname(sys.modules[__name__].__file__), 'model.p')
+    scoring_model_path = os.path.join(os.path.dirname(sys.modules[__name__].__file__), '_model.p.py')
 
 
 class Email:
