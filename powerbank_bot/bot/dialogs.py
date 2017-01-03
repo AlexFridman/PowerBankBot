@@ -167,8 +167,8 @@ def create_credit_request_dialog(dialog_state, credit_type):
 
 def fill_scoring_form(dialog_state, request_id):
     try:
-        request = dialog_state.api.get_request(request_id)
-        credit_type = dialog_state.api.get_credit_type(request.credit_type_id)
+        request = dialog_state.api.get_request_by_id(request_id)
+        credit_type = dialog_state.api.get_credit_type_by_id(request.credit_type_id)
 
         if not all((request, credit_type)):
             raise RuntimeError('Both request and credit type are needed for scoring process')

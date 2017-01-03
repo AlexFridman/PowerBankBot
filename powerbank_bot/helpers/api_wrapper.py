@@ -31,7 +31,7 @@ class ApiWrapper:
         url = os.path.join(Api.base_url, 'Requests/GetForUsers', user_id)
         return [Request.from_json(request) for request in requests.get(url, auth=Api.credentials).json()]
 
-    def get_request(self, request_id):
+    def get_request_by_id(self, request_id):
         url = os.path.join(Api.base_url, 'Requests', 'get', request_id)
         response = requests.get(url, auth=Api.credentials)
         if response.status_code == 200:
@@ -51,7 +51,7 @@ class ApiWrapper:
         return [CreditType.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()
                 if credit['IsActive']]
 
-    def get_credit_type(self, credit_type_id):
+    def get_credit_type_by_id(self, credit_type_id):
         for credit_type in self.get_credit_types():
             if credit_type.credit_id == credit_type_id:
                 return credit_type
