@@ -19,19 +19,24 @@ class ApiWrapper:
         url = os.path.join(Api.base_url, 'Users/GetUserIdByPhoneNumber', phone_number.replace('+', ''))
         response = requests.get(url, auth=Api.credentials)
         if response.status_code == 200:
-            return User(user_id=str(response.json()))
+            return User.from_json(response.json())
+
+    def get_user_by_id(self, user_id):
+        url = os.path.join(Api.base_url, 'Users', 'get', user_id)
+        response = requests.get(url, auth=Api.credentials)
+        if response.status_code == 200:
+            return User.from_json(response.json())
 
     def get_user_requests(self, user_id):
-        url = os.path.join(Api.base_url, 'Requests/GetForUser', user_id)
+        url = os.path.join(Api.base_url, 'Requests/GetForUsers', user_id)
         return [Request.from_json(request) for request in requests.get(url, auth=Api.credentials).json()]
 
-    def get_request(self, user_id, request_id):
-        for request in self.get_user_requests(user_id):
-            if request.request_id == request_id:
-                return request
+    def get_request(self, request_id):
+        url = os.path.join(Api.base_url, 'Requests', 'get', request_id)
+        return [Request.from_json(request) for request in requests.get(url, auth=Api.credentials).json()]
 
     def get_user_credits(self, user_id):
-        url = os.path.join(Api.base_url, 'Credits/GetForUser', user_id)
+        url = os.path.join(Api.base_url, 'Credits/GetForUsers', user_id)
         return [UserCredit.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()]
 
     def get_credit(self, user_id, credit_id):
@@ -40,7 +45,7 @@ class ApiWrapper:
                 return credit
 
     def get_credit_types(self):
-        url = os.path.join(Api.base_url, 'CreditTypes')
+        url = os.path.join(Api.base_url, 'CreditTypes', 'get')
         return [CreditType.from_json(credit) for credit in requests.get(url, auth=Api.credentials).json()
                 if credit['IsActive']]
 
@@ -63,7 +68,7 @@ class ApiWrapper:
             'MonthIncome': month_income,
             'StatusString': RequestStatus.IN_PROCESS
         }
-        url = os.path.join(Api.base_url, 'Requests')
+        url = os.path.join(Api.base_url, 'Requests', 'post')
         requests.post(url, auth=Api.credentials, data=payload).raise_for_status()
 
         if return_id:
