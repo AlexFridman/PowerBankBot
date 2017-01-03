@@ -111,7 +111,7 @@ class RequestStatus:
 
 
 class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'credit_type_id', 'request_date',
-                                     'amount', 'status'])):
+                                     'amount', 'status', 'user_id'])):
     @classmethod
     def from_json(cls, json):
         return Request(
@@ -120,7 +120,8 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'credit_t
             credit_type_id=str(json['CreditTypeId']),
             request_date=json['FormattedDate'][:10],
             amount=json['Amount'],
-            status=json['StatusString']
+            status=json['StatusString'],
+            user_id=json['UserId']
         )
 
     def to_html(self):
