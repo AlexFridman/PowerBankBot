@@ -182,6 +182,7 @@ def fill_scoring_form(dialog_state, request_id):
         return
 
     form['request_id'] = request_id
+    form['age'] = dialog_state.age
     form['credit_amount'] = request.amount
     form['duration_in_month'] = credit_type.duration_in_month
 
