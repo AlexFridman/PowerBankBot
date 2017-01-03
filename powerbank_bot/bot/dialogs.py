@@ -98,7 +98,7 @@ def auth_dialog(dialog_state):
         yield from only_back('Количество попыток превышено. Попробуйте позже')
         return
 
-    verification_code_message = 'Введите проверочный код'
+    verification_code_message = 'Проверочный код отправлен Вам на E-mail. Введите его'
 
     for _ in range(enter_verification_code_trials_count):
         code = yield from text_question(
