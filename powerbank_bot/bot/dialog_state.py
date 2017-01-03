@@ -167,15 +167,21 @@ class DialogState:
             raise ApiError(e)
 
     def get_credits(self):
+        def sort_key(x):
+            return x.is_closed, x.start_date
+
         try:
-            return self._api_wrapper.get_user_credits(self.user_id)
+            return sorted(self._api_wrapper.get_user_credits(self.user_id), key=sort_key)
         except Exception as e:
             LOGGER.exception('Failed to get credits')
             raise ApiError(e)
 
     def get_requests(self):
+        def sort_key(x):
+            return x.request_date
+
         try:
-            return self._api_wrapper.get_user_requests(self.user_id)
+            return sorted(self._api_wrapper.get_user_requests(self.user_id), key=sort_key)
         except Exception as e:
             LOGGER.exception('Failed to get requests')
             raise ApiError(e)

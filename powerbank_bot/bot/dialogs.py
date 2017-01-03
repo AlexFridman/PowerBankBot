@@ -234,7 +234,7 @@ def user_credit_info_dialog(dialog_state, credit):
 def user_requests_dialog(dialog_state):
     while True:
         try:
-            menu = Menu([(user_request_info_dialog(dialog_state, request), request.credit_name)
+            menu = Menu([(user_request_info_dialog(dialog_state, request), request.name)
                          for request in dialog_state.get_requests()], back_button=True)
         except ApiError:
             yield from only_back(GENERAL_ERROR_CAPTION)

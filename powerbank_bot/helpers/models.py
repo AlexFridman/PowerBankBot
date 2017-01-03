@@ -66,9 +66,11 @@ class UserCredit(namedtuple('UserCredit', ['credit_type', 'is_closed', 'start_da
 
     @property
     def name(self):
+        loan_term = '{0.start_date} — {0.end_date}\t'.format(self)
+
         if self.is_closed:
-            return emojize('{0.credit_type.name} :white_check_mark:'.format(self), use_aliases=True)
-        return self.credit_type.name
+            return loan_term + emojize('{0.credit_type.name} :white_check_mark:'.format(self), use_aliases=True)
+        return loan_term + self.credit_type.name
 
     def to_html(self):
         return td.HTML(('<b>{0.name}</b>\n'
@@ -126,6 +128,11 @@ class Request(namedtuple('Request', ['request_id', 'credit_type_name', 'credit_t
     def credit_name(self):
         return emojize('{} {}'.format(self.credit_type_name, RequestStatus.status_to_emoji(self.status)),
                        use_aliases=True)
+
+    @property
+    def name(self):
+        return emojize('{} {} {}'.format(self.request_date, self.credit_type_name,
+                                         RequestStatus.status_to_emoji(self.status)), use_aliases=True)
 
 
 class RequestUpdate(namedtuple('RequestUpdate', ['update_id', 'user_id', 'request_id', 'credit_type_name', 'timestamp',
