@@ -34,7 +34,7 @@ class ScoringModel:
             ('housing', 3, [0.33, 1.0, 0.2], 1),
             ('installment_plans', 3, [0.5, 0.33, 0.5], 0.2),
             ('job', 4, [0.1, 0.33, 0.67, 1.0], 1.1),
-            ('other_debtors', 3, [0.1, 0.67, 0.5], 1),
+            ('other_debtors', 3, [0.2, 0.95, 0.6], 1),
             ('personal_status', 5, [0.5, 0.33, 0.67, 1.0, 0.5], 1.2),
             ('present_employment_since', 5, [0.1, 0.2, 0.5, 0.83, 1.0], 1.3),
             ('property', 4, [1.0, 0.83, 0.83, 0.33], 1.3),
