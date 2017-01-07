@@ -26,21 +26,21 @@ class ScoringModel:
 
     def predict_dummy_proba(self, form, use_weights=True):
         schema = [
-            ('age', None, [[25, 56], [0.6, 0.8, 0.3]], 1.2),
+            ('age', None, [[25, 56], [0.67, 1.0, 0.17]], 1.2),
             ('credit_amount', None, None, 0),
-            ('credit_history', 5, [0.8, 0.9, 0.9, 0.4, 0.2], 1.3),
+            ('credit_history', 5, [0.8, 1.0, 1.0, 0.33, 0.0], 1.3),
             ('duration_in_month', None, None, 0),
-            ('foreign_worker', 'b', [0.7, 0.4], 0.5),
-            ('housing', 3, [0.4, 0.8, 0.3], 1),
-            ('installment_plans', 3, [0.5, 0.4, 0.5], 0.5),
-            ('job', 4, [0.2, 0.4, 0.6, 0.8], 1.1),
-            ('other_debtors', 3, [0.2, 0.6, 0.5], 1),
-            ('personal_status', 5, [0.5, 0.4, 0.6, 0.8, 0.5], 1.2),
-            ('present_employment_since', 5, [0.2, 0.3, 0.5, 0.7, 0.9], 1.3),
-            ('property', 4, [0.8, 0.7, 0.7, 0.4], 1.3),
+            ('foreign_worker', 'b', [0.83, 0.33], 0.5),
+            ('housing', 3, [0.33, 1.0, 0.17], 1),
+            ('installment_plans', 3, [0.5, 0.33, 0.5], 0.5),
+            ('job', 4, [0.0, 0.33, 0.67, 1.0], 1.1),
+            ('other_debtors', 3, [0.0, 0.67, 0.5], 1),
+            ('personal_status', 5, [0.5, 0.33, 0.67, 1.0, 0.5], 1.2),
+            ('present_employment_since', 5, [0.0, 0.17, 0.5, 0.83, 1.0], 1.3),
+            ('property', 4, [1.0, 0.83, 0.83, 0.33], 1.3),
             ('purpose', 11, [0.5] * 11, 0),
-            ('status_of_existing_checking_account', 4, [0.4, 0.6, 0.8, 0.5], 1.5),
-            ('telephone', 'b', [0.8, 0.4], 0.5)
+            ('status_of_existing_checking_account', 4, [0.33, 0.67, 1.0, 0.5], 1.5),
+            ('telephone', 'b', [1.0, 0.33], 0.5)
         ]
 
         x = 1
